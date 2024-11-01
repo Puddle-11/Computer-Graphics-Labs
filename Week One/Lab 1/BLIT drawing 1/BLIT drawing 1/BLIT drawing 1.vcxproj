@@ -127,11 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BLIT drawing 1.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="RasterSurface.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BLITVars.h" />
     <ClInclude Include="RasterSurface.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>

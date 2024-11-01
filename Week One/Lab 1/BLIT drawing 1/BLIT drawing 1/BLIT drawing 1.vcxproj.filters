@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BLIT drawing 1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RasterSurface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -30,6 +30,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BLITVars.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
