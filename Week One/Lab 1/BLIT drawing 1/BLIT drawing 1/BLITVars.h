@@ -436,7 +436,7 @@ public:
 	//Static colors
 	static unsigned int GetAlphaARGB(unsigned int _col) { return (_col & 0xFF000000) >> 16; }
 
-	static Color Red() { return Color(0xFF0000FF); }
+	static Color Red() { return Color(0xFFFF0000); }
 	static Color Blue() { return Color(0xFF0000FF); }
 	static Color Green() { return Color(0xFF00FF00); }
 	static Color Magenta() { return Color(0xFFFF00FF); }

@@ -3,6 +3,7 @@
 
 
 // info about this application
+#define _USE_MATH_DEFINES
 #include "BLITVars.h"
 #include "tiles_12.h"
 #include "fire_01.h"
@@ -10,7 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
+#include <math.h>
 #define imagePixelCount ImageHeight * ImageWidth
 BLITVars::Vector2Int pixelPos;
 BLITVars::ScreenBounds mainBounds;
@@ -51,6 +52,8 @@ void DrawRect(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max, Color _color
 void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max);
 void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c);
 void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
+void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
+void DrawRegularPolygon(int _size, int _vertCount, Color c, bool _wire = true);
 int main()
 {
 	timer = XTime();
@@ -78,23 +81,24 @@ int main()
 	ImageDef path = ImageDef(BLITVars::Vector2Int(352, 144), BLITVars::Vector2Int(368, 160), "Path");
 	AnimationDef Flame = AnimationDef(fire_01_pixels, BLITVars::ScreenBounds(fire_01_width, fire_01_height), BLITVars::ScreenBounds(128, 128), 30, BLITVars::Vector2Int(352, 144), BLITVars::Vector2Int(368, 160), "Path");
 
-	std::cout << Flame.GetFramePosition(63).ToString();
 	ClearBuffer();
-	//DrawLine(BLITVars::Vector2Int(10, 0), BLITVars::Vector2Int(10, 50), Color::White());
-	//DrawLine(BLITVars::Vector2Int(10, 50), BLITVars::Vector2Int(10, 0), Color::Yellow());
-	//BLITVars::Vector2Int _points[4]{
-	//	BLITVars::Vector2Int(50,50),
-	//	BLITVars::Vector2Int(500,50),
-	//	BLITVars::Vector2Int(500,500),
-	//	BLITVars::Vector2Int(50,500),
-	//};
+	/*BLITVars::Vector2Int _points[8]{
+		BLITVars::Vector2Int(100,10),
+		BLITVars::Vector2Int(200,10),
+		BLITVars::Vector2Int(300,110),
+		BLITVars::Vector2Int(300,210),
+		BLITVars::Vector2Int(200,310),
+		BLITVars::Vector2Int(100,310),
+		BLITVars::Vector2Int(0,210),
+		BLITVars::Vector2Int(0,110),
+	};*/
 
-	//DrawLineSet(_points,4, Color::Yellow());
-	DrawLine(BLITVars::Vector2Int(10, 10), BLITVars::Vector2Int(100, 100), Color::Yellow());
-	Plot(BLITVars::Vector2Int(2, 2), Color::Blue(), 1);
-	Plot(BLITVars::Vector2Int(100, 100), Color::Blue(), 1);
 
+
+	//DrawPolygon(_points, 8, Color::Red());
+	DrawRegularPolygon(100, 6, Color::Magenta(), true);
 	RasterizeLayers();
+
 
 	RS_Initialize("Rowan Byington Lab 1", mainBounds.Width, mainBounds.Height);
 	do {
@@ -141,7 +145,6 @@ void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max)
 
 void RasterizeLayers()
 {
-
 	Color l1;
 	Color l2;
 	for (int i = 0; i < imagePixelCount; i++)
@@ -171,7 +174,6 @@ void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::
 	{
 		for (int y = _srcMin.y; y < _srcMax.y; y++)
 		{
-
 
 			pixelColor = Access(x, y, _srcBounds, _src);
 			filteredPos = _cpyPos + BLITVars::Vector2Int(x, y) - _srcMin;
@@ -306,8 +308,7 @@ void DrawRect(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max, Color _color
 }
 float lerp(float p1, float p2, float ratio)
 {
-	float step = p1 + (p2 - p1) * ratio;
-	return p1 + step;
+	return p1 + (p2 - p1) * ratio;
 }
 void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
 {
@@ -317,70 +318,54 @@ void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
 	{
 		DrawLine(_points[i-1], _points[i],c);
 	}
-
-
-
 }
-void DrawPolygon() 
+void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
 {
+	BLITVars::Vector2Int* newPoints = new BLITVars::Vector2Int[_pointCount + 1];
+	for (size_t i = 0; i < _pointCount; i++)
+	{
+		newPoints[i] = _points[i];
+
+
+	}
+	newPoints[_pointCount] = _points[0];
+	DrawLineSet(newPoints, _pointCount + 1, c);
+	delete newPoints;
+
 
 }
 
 void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c)
 {
 	float r = 0;
-	int changeX = _p2.x - _p1.x;
-	int changeY = _p2.y - _p1.y;
-	BLITVars::Vector2Int currPoint = _p1;
-
-	int safety = 0;
-
-
-
-	for (int i = 0; i < 90; i++)
+	int maxChange = abs(_p2.x - _p1.x) > abs(_p2.y - _p1.y) ? abs(_p2.x - _p1.x) : abs(_p2.y - _p1.y);
+	BLITVars::Vector2Int currPos = _p1;
+	for (int i = 0; i <= maxChange; i++)
 	{
-		Plot(_p1 + BLITVars::Vector2Int(i, 0), c, 1);
-
+		r = (float)i / (float)abs(maxChange);
+		currPos = BLITVars::Vector2Int(floor( lerp(_p1.x, _p2.x, r) + 0.5), floor( lerp(_p1.y, _p2.y, r)+0.5));
+		Plot(currPos, c, 1);
 	}
+}
 
-
-
-
-
-
-
-
-
-
-	/*if (abs(changeX) > abs(changeY)) 
-	{
-		while (abs(r) < 1)
-		{
-			r = abs((float)(currPoint.x - _p1.x) / (float)changeX);
-			float tempY = lerp(_p1.y, _p2.y, r);
-			currPoint.y = floor(tempY + 0.5);
-			Plot(currPoint, c, 1);
-			std::cout << currPoint.ToString() << " " << r << " " << std::endl;
-			currPoint.x = changeX < 0 ? currPoint.x - 1 : currPoint.x + 1;
-
-		}
-	}
-	else
-	{
-		while (abs(r) < 1)
-		{
-			r = abs( (float)(currPoint.y - _p1.y) / (float)changeY);
-			float tempX = lerp(_p1.x, _p2.x, r);
-			currPoint.x = floor(tempX + 0.5);
-			Plot(currPoint, c, 1);
-			std::cout << currPoint.ToString() << " " << r << " " << std::endl;
-			
-			currPoint.y = changeY < 0 ? currPoint.y - 1 : currPoint.y + 1;
-		}
-
-
-
+void DrawRegularPolygon(int _size, int _vertCount, Color c, bool _wire)
+{
+	/*for (i = 0; i < n; i++) {
+		printf("%f %f\n", r * Math.cos(2 * Math.PI * i / n), r * Math.sin(2 * Math.PI * i / n));
 	}*/
+	BLITVars::Vector2Int* temp = new BLITVars::Vector2Int[_vertCount];
+	for (int i = 0; i < _vertCount; i++)
+	{
+	
+		float x = _size * cos(2 * M_PI * i / _vertCount);
+		float y =  _size * sin(2 * M_PI * i / _vertCount);
+		x = floor(x + 0.5) + _size;
+		y = floor(y + 0.5) + _size;
+		temp[i] = BLITVars::Vector2Int(x,y);
+		Plot(x, y, Color::White(), 1);
+	}
+	DrawPolygon(temp, _vertCount,c);
+	delete[] temp;
 }
 
 
