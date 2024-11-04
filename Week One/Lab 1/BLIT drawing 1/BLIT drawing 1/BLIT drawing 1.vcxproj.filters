@@ -35,5 +35,11 @@
     <ClInclude Include="BLITVars.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tiles_12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fire_01.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
