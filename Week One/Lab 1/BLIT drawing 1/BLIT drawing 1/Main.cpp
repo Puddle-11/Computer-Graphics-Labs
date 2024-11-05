@@ -53,7 +53,7 @@ void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max);
 void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c);
 void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
 void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
-void DrawRegularPolygon(int _size, int _vertCount, Color c, bool _wire = true);
+void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2,  bool _wire = true);
 int main()
 {
 	timer = XTime();
@@ -82,25 +82,21 @@ int main()
 	AnimationDef Flame = AnimationDef(fire_01_pixels, BLITVars::ScreenBounds(fire_01_width, fire_01_height), BLITVars::ScreenBounds(128, 128), 30, BLITVars::Vector2Int(352, 144), BLITVars::Vector2Int(368, 160), "Path");
 
 	ClearBuffer();
-	/*BLITVars::Vector2Int _points[8]{
-		BLITVars::Vector2Int(100,10),
+	BLITVars::Vector2Int _points[4]{
 		BLITVars::Vector2Int(200,10),
-		BLITVars::Vector2Int(300,110),
-		BLITVars::Vector2Int(300,210),
-		BLITVars::Vector2Int(200,310),
-		BLITVars::Vector2Int(100,310),
-		BLITVars::Vector2Int(0,210),
-		BLITVars::Vector2Int(0,110),
-	};*/
+		BLITVars::Vector2Int(300,10),
+		BLITVars::Vector2Int(400,110),
+		BLITVars::Vector2Int(400,210),
+	};
 
 
-
-	//DrawPolygon(_points, 8, Color::Red());
-	DrawRegularPolygon(100, 6, Color::Magenta(), true);
+	//DrawRect(BLITVars::Vector2Int(200, 200), BLITVars::Vector2Int(300, 220), Color::Green(), false);
+	//DrawLineSet(_points, 4, Color::Yellow());
+	DrawRegularPolygon(100, 50, Color::Magenta(), Color::Cyan(), true);
 	RasterizeLayers();
 
 
-	RS_Initialize("Rowan Byington Lab 1", mainBounds.Width, mainBounds.Height);
+	RS_Initialize("Rowan Byington Lab 2", mainBounds.Width, mainBounds.Height);
 	do {
 
 	} while (RS_Update(image_pixels, imagePixelCount));
@@ -141,8 +137,6 @@ void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max)
 	}
 }
 
-
-
 void RasterizeLayers()
 {
 	Color l1;
@@ -165,7 +159,6 @@ void RasterizeLayers()
 	}
 }
 
-
 void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::Vector2Int _cpyPos, BLITVars::Vector2Int _offset, bool _center, const unsigned int* _src, BLITVars::ScreenBounds _srcBounds, int _layerIndex)
 {
 	Color pixelColor;
@@ -186,12 +179,10 @@ void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::
 		}
 	}
 }
-
 void Copy(BLITVars::Vector2Int _scrMin, BLITVars::Vector2Int _scrMax, BLITVars::Vector2Int _cpyPos, bool _center, const unsigned int* _src, BLITVars::ScreenBounds _srcBounds, int _layerIndex)
 {
 	Copy(_scrMin, _scrMax, _cpyPos, BLITVars::Vector2Int(0, 0), _center, _src, _srcBounds, _layerIndex);
 }
-
 void ClearBuffer()
 {
 	ClearLayers(0);
@@ -306,6 +297,7 @@ void DrawRect(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max, Color _color
 		}
 	}
 }
+
 float lerp(float p1, float p2, float ratio)
 {
 	return p1 + (p2 - p1) * ratio;
@@ -325,14 +317,10 @@ void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
 	for (size_t i = 0; i < _pointCount; i++)
 	{
 		newPoints[i] = _points[i];
-
-
 	}
 	newPoints[_pointCount] = _points[0];
 	DrawLineSet(newPoints, _pointCount + 1, c);
-	delete newPoints;
-
-
+	delete[] newPoints;
 }
 
 void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c)
@@ -343,28 +331,32 @@ void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c)
 	for (int i = 0; i <= maxChange; i++)
 	{
 		r = (float)i / (float)abs(maxChange);
-		currPos = BLITVars::Vector2Int(floor( lerp(_p1.x, _p2.x, r) + 0.5), floor( lerp(_p1.y, _p2.y, r)+0.5));
+		currPos = BLITVars::Vector2Int(floor(lerp(_p1.x, _p2.x, r) + 0.5), floor(lerp(_p1.y, _p2.y, r)+0.5));
 		Plot(currPos, c, 1);
 	}
 }
 
-void DrawRegularPolygon(int _size, int _vertCount, Color c, bool _wire)
+void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire)
 {
-	/*for (i = 0; i < n; i++) {
-		printf("%f %f\n", r * Math.cos(2 * Math.PI * i / n), r * Math.sin(2 * Math.PI * i / n));
-	}*/
-	BLITVars::Vector2Int* temp = new BLITVars::Vector2Int[_vertCount];
+	BLITVars::Vector2Int* temp = new BLITVars::Vector2Int[_vertCount + 1];
 	for (int i = 0; i < _vertCount; i++)
 	{
-	
 		float x = _size * cos(2 * M_PI * i / _vertCount);
 		float y =  _size * sin(2 * M_PI * i / _vertCount);
 		x = floor(x + 0.5) + _size;
 		y = floor(y + 0.5) + _size;
 		temp[i] = BLITVars::Vector2Int(x,y);
-		Plot(x, y, Color::White(), 1);
 	}
-	DrawPolygon(temp, _vertCount,c);
+
+	if (_vertCount % 2 == 0) 
+	{
+		for (int i = 0; i < _vertCount / 2; i++)
+		{
+			DrawLine(temp[i], temp[(i + (_vertCount / 2)) % _vertCount], Color::CLerp(c, c2, ((float)i / (_vertCount / 2)) * 255));
+		}
+	}
+	temp[_vertCount] = temp[0];
+	DrawLineSet(temp, _vertCount + 1,c);
 	delete[] temp;
 }
 

@@ -3,11 +3,15 @@
 
 
 // info about this application
+#define _USE_MATH_DEFINES
 #include "BLITVars.h"
 #include "tiles_12.h"
 #include "fire_01.h"
 #include "XTime.h"
 #include <vector>
+#include <iostream>
+#include <cmath>
+#include <math.h>
 #define imagePixelCount ImageHeight * ImageWidth
 BLITVars::Vector2Int pixelPos;
 BLITVars::ScreenBounds mainBounds;
@@ -46,6 +50,10 @@ void ClearLayers();
 void ResetPixel(int _index, int _layerIndex);
 void DrawRect(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max, Color _color, bool _fill = false, int _layerIndex = 0);
 void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max);
+void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c);
+void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
+void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c);
+void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2,  bool _wire = true);
 int main()
 {
 	timer = XTime();
@@ -73,102 +81,24 @@ int main()
 	ImageDef path = ImageDef(BLITVars::Vector2Int(352, 144), BLITVars::Vector2Int(368, 160), "Path");
 	AnimationDef Flame = AnimationDef(fire_01_pixels, BLITVars::ScreenBounds(fire_01_width, fire_01_height), BLITVars::ScreenBounds(128, 128), 30, BLITVars::Vector2Int(352, 144), BLITVars::Vector2Int(368, 160), "Path");
 
-	std::cout << Flame.GetFramePosition(63).ToString();
 	ClearBuffer();
-
-	BLITVars::Vector2Int currPos;
-	BLITVars::Vector2Int checkOffset;
-	checkOffset = (path.max - path.min);
-	checkOffset = checkOffset / 2;
-	BLITVars::Vector2Int origin = Flame.GetFramePosition(0);
-	BLITVars::Vector2Int corner = origin;
-	corner.x = corner.x + Flame.frameSize.Width;
-	corner.y = corner.y + Flame.frameSize.Height;
+	BLITVars::Vector2Int _points[4]{
+		BLITVars::Vector2Int(200,10),
+		BLITVars::Vector2Int(300,10),
+		BLITVars::Vector2Int(400,110),
+		BLITVars::Vector2Int(400,210),
+	};
 
 
-
-
-
-
-
-
-
-
-	for (int x = 0; x < mainBounds.Width; x++)
-	{
-		for (int y = 0; y < mainBounds.Height; y++)
-		{
-			currPos = BLITVars::Vector2Int(x, y);
-
-			if (x % 32 == 0 && y % 32 == 0)
-			{
-				Copy(bgImage.min, bgImage.max, BLITVars::Vector2Int(x, y), false, tiles_12_pixels, BLITVars::ScreenBounds(tiles_12_width, tiles_12_height), 1);
-			}
-
-
-			if (BLITVars::Vector2Int::Distance(currPos + checkOffset, center) < 100) {
-				if (x % 16 == 0 && y % 16 == 0)
-				{
-					Copy(path.min, path.max, BLITVars::Vector2Int(x, y), false, tiles_12_pixels, BLITVars::ScreenBounds(tiles_12_width, tiles_12_height), 1);
-				}
-			}
-		}
-	}
-
-	float DistFromCenter;
-
-	for (int y = 0; y < mainBounds.Height; y++)
-	{
-		for (int x = 0; x < mainBounds.Width; x++)
-		{
-			currPos = BLITVars::Vector2Int(x, y);
-			if (BLITVars::Vector2Int::Distance(currPos, center) > 150)
-			{
-				int ran = rand();
-				if (ran % 5000 == 10) {
-					Copy(tree.min, tree.max, currPos, true, tiles_12_pixels, BLITVars::ScreenBounds(tiles_12_width, tiles_12_height), 1);
-				}
-			}
-		}
-	}
-	Copy(house.min, house.max, center, true, tiles_12_pixels, BLITVars::ScreenBounds(tiles_12_width, tiles_12_height), 1);
-
-
-
-	/*DrawRect(BLITVars::Vector2Int(60, 60), BLITVars::Vector2Int(200, 100), Color::Yellow(), true);
-	DrawRect(BLITVars::Vector2Int(50, 50), BLITVars::Vector2Int(210, 110), Color::White());*/
-
-	BLITVars::Vector2Int _currPos;
-	Color currColor;
-	int currentFrame = 0;
-	BLITVars::Vector2Int FrameStartingPos;
-	BLITVars::Vector2Int _filteredPos;
-	float time = 0;
+	//DrawRect(BLITVars::Vector2Int(200, 200), BLITVars::Vector2Int(300, 220), Color::Green(), false);
+	//DrawPolygon(_points, 4, Color::Yellow());
+	DrawRegularPolygon(200, 8, Color::Magenta(), Color::Cyan(), true);
 	RasterizeLayers();
-	RS_Initialize("Rowan Byington Lab 1", mainBounds.Width, mainBounds.Height);
+
+
+	RS_Initialize("Rowan Byington Lab 2", mainBounds.Width, mainBounds.Height);
 	do {
-		timer.Signal();
-		time += timer.Delta();
-		FrameStartingPos = Flame.GetFramePosition(currentFrame);
-		if (time >= 1 / (float)Flame.frameRate) {
-			time = 0;
-			ClearLayers(2);
 
-
-			BLITVars::Vector2Int min = Flame.GetFramePosition(currentFrame);
-
-			BLITVars::Vector2Int max = BLITVars::Vector2Int(Flame.frameSize.Width, Flame.frameSize.Height) + Flame.GetFramePosition(currentFrame);
-
-			BLITVars::Vector2Int startingPos = BLITVars::Vector2Int(290,100);
-			BLITVars::Vector2Int animMax = startingPos + max;
-			animMax = animMax - min;
-
-			Copy(min, max, startingPos, false, fire_01_pixels, Flame.srcSize, 2);
-			RasterizeRange(startingPos, animMax);
-
-
-			currentFrame = (currentFrame + 1) % Flame.NumOfFrames;
-		}
 	} while (RS_Update(image_pixels, imagePixelCount));
 	RS_Shutdown();
 	return 0;
@@ -180,7 +110,7 @@ void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max)
 {
 	Color l1;
 	Color l2;
-	int index = 0; 
+	int index = 0;
 	BLITVars::Vector2Int currPos;
 
 	for (int x = _min.x; x < _max.x; x++)
@@ -205,15 +135,10 @@ void RasterizeRange(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max)
 			Plot(index, l1.GetARGB(), 0);
 		}
 	}
-
-	
 }
-
-
 
 void RasterizeLayers()
 {
-
 	Color l1;
 	Color l2;
 	for (int i = 0; i < imagePixelCount; i++)
@@ -222,8 +147,8 @@ void RasterizeLayers()
 
 		l2 = AccessARGB(i, layers[0]);
 		l1 = l2;
-		
-		
+
+
 		for (int j = 1; j < layerCount; j++)
 		{
 			l2 = AccessARGB(i, layers[j]);
@@ -234,7 +159,6 @@ void RasterizeLayers()
 	}
 }
 
-
 void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::Vector2Int _cpyPos, BLITVars::Vector2Int _offset, bool _center, const unsigned int* _src, BLITVars::ScreenBounds _srcBounds, int _layerIndex)
 {
 	Color pixelColor;
@@ -243,7 +167,6 @@ void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::
 	{
 		for (int y = _srcMin.y; y < _srcMax.y; y++)
 		{
-
 
 			pixelColor = Access(x, y, _srcBounds, _src);
 			filteredPos = _cpyPos + BLITVars::Vector2Int(x, y) - _srcMin;
@@ -256,12 +179,10 @@ void Copy(BLITVars::Vector2Int _srcMin, BLITVars::Vector2Int _srcMax, BLITVars::
 		}
 	}
 }
-
 void Copy(BLITVars::Vector2Int _scrMin, BLITVars::Vector2Int _scrMax, BLITVars::Vector2Int _cpyPos, bool _center, const unsigned int* _src, BLITVars::ScreenBounds _srcBounds, int _layerIndex)
 {
 	Copy(_scrMin, _scrMax, _cpyPos, BLITVars::Vector2Int(0, 0), _center, _src, _srcBounds, _layerIndex);
 }
-
 void ClearBuffer()
 {
 	ClearLayers(0);
@@ -340,7 +261,7 @@ void Plot(int _index, unsigned int _color, int _layerIndex)
 	if ((_color & 0xFF000000) >> 24 == 0) {
 		return;
 	}
-	if(_layerIndex == 0){
+	if (_layerIndex == 0) {
 		image_pixels[_index] = _color;
 	}
 	else {
@@ -348,7 +269,7 @@ void Plot(int _index, unsigned int _color, int _layerIndex)
 	}
 }
 void ResetPixel(int _index, int _layerIndex) {
-	
+
 	if (_layerIndex == 0) {
 		image_pixels[_index] = Color::Transparent().GetARGB();
 	}
@@ -375,9 +296,68 @@ void DrawRect(BLITVars::Vector2Int _min, BLITVars::Vector2Int _max, Color _color
 			}
 		}
 	}
+}
 
+float lerp(float p1, float p2, float ratio)
+{
+	return p1 + (p2 - p1) * ratio;
+}
+void DrawLineSet(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
+{
+	
+	if (_pointCount <= 1)return;
+	for (int i = 1; i < _pointCount; i++)
+	{
+		DrawLine(_points[i-1], _points[i],c);
+	}
+}
+void DrawPolygon(const BLITVars::Vector2Int* _points, int _pointCount, Color c)
+{
+	BLITVars::Vector2Int* newPoints = new BLITVars::Vector2Int[_pointCount + 1];
+	for (size_t i = 0; i < _pointCount; i++)
+	{
+		newPoints[i] = _points[i];
+	}
+	newPoints[_pointCount] = _points[0];
+	DrawLineSet(newPoints, _pointCount + 1, c);
+	delete newPoints;
+}
 
+void DrawLine(BLITVars::Vector2Int _p1, BLITVars::Vector2Int _p2, Color c)
+{
+	float r = 0;
+	int maxChange = abs(_p2.x - _p1.x) > abs(_p2.y - _p1.y) ? abs(_p2.x - _p1.x) : abs(_p2.y - _p1.y);
+	BLITVars::Vector2Int currPos = _p1;
+	for (int i = 0; i <= maxChange; i++)
+	{
+		r = (float)i / (float)abs(maxChange);
+		currPos = BLITVars::Vector2Int(floor(lerp(_p1.x, _p2.x, r) + 0.5), floor(lerp(_p1.y, _p2.y, r)+0.5));
+		Plot(currPos, c, 1);
+	}
+}
 
+void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire)
+{
+	BLITVars::Vector2Int* temp = new BLITVars::Vector2Int[_vertCount + 1];
+	for (int i = 0; i < _vertCount; i++)
+	{
+
+		float x = _size * cos(2 * M_PI * i / _vertCount);
+		float y =  _size * sin(2 * M_PI * i / _vertCount);
+		x = floor(x + 0.5) + _size;
+		y = floor(y + 0.5) + _size;
+		temp[i] = BLITVars::Vector2Int(x,y);
+	}
+	if (_vertCount % 2 == 0) 
+	{
+		for (int i = 0; i < _vertCount / 2; i++)
+		{
+			DrawLine(temp[i], temp[(i + (_vertCount / 2)) % _vertCount], Color::CLerp(c, c2, ((float)i / (_vertCount / 2)) * 255));
+		}
+	}
+	temp[_vertCount] = temp[0];
+	DrawLineSet(temp, _vertCount + 1,c);
+	delete[] temp;
 }
 
 

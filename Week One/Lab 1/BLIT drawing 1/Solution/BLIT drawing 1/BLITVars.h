@@ -8,8 +8,8 @@
 class BLITVars
 {
 public:
-#define ImageWidth 700
-#define ImageHeight 500
+#define ImageWidth 400
+#define ImageHeight 400
 
 
 
@@ -426,19 +426,17 @@ public:
 		Color Res;
 
 		float a = _step / (float)255;
-
 		Res.SetGreen(a * C1.GetGreen() + (1 - a) * C2.GetGreen());
 		Res.SetRed(a * C1.GetRed() + (1 - a) * C2.GetRed());
 		Res.SetBlue(a * C1.GetBlue() + (1 - a) * C2.GetBlue());
 		Res.SetAlpha(a * C1.GetAlpha() + (1 - a) * C2.GetAlpha());
-
 		return Res;
 
 	}
 	//Static colors
 	static unsigned int GetAlphaARGB(unsigned int _col) { return (_col & 0xFF000000) >> 16; }
 
-	static Color Red() { return Color(0xFF0000FF); }
+	static Color Red() { return Color(0xFFFF0000); }
 	static Color Blue() { return Color(0xFF0000FF); }
 	static Color Green() { return Color(0xFF00FF00); }
 	static Color Magenta() { return Color(0xFFFF00FF); }
@@ -529,8 +527,3 @@ AnimationDef::AnimationDef(const unsigned int* _src, BLITVars::ScreenBounds _src
 	NumOfFrames = floor(_srcBound.Width / _frameBounds.Width) * floor(_srcBound.Height / _frameBounds.Height);
 	itteration = 0;
 }
-
-
-
-
-
