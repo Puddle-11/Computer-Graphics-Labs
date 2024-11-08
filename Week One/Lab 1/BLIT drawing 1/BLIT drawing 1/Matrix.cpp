@@ -1,5 +1,21 @@
 #include "Matrix.h"
 
+//TODO: Matrix * Matrix
+
+//TODO: Vector4 * Matrix
+
+Matrix::Matrix()
+{
+	float arr[4][4] =
+	{
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0} ,
+		{0, 0, 0, 0}
+
+	};
+	SetMatrix(arr);
+}
 Matrix::Matrix(float matrixValue[4][4])
 {
 	SetMatrix(matrixValue);
@@ -27,5 +43,8 @@ std::string Matrix::ToString()
 		res += "\n";
 	}
 	return res;
+}
+Matrix Matrix::operator*(Matrix _ref)
+{
 
 }

@@ -80,8 +80,6 @@ unsigned int Color::GetABGR() { return ABGRcolor; }
 unsigned int Color::GetARGB() { return ARGBcolor; }
 unsigned int Color::GetBGRA() { return ARGBtoBGRA(ARGBcolor); }
 
-
-
 void Color::SetAlpha(unsigned int _alpha)
 {
 

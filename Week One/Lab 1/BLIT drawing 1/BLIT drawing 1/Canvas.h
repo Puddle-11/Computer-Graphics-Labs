@@ -127,7 +127,7 @@ void RasterizeLayers()
 			if (l2.GetAlpha() == 255) l1 = l2;
 			else l1 = Color::CLerp(l2, l1, l2.GetAlpha());
 		}
-		Plot(i, l1.GetARGB(), 0);
+		Plot(i, l1.ARGBcolor, 0);
 	}
 }
 

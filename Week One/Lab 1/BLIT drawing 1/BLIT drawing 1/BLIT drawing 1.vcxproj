@@ -138,6 +138,7 @@
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3DMath.h" />
     <ClInclude Include="AnimationDef.h" />
     <ClInclude Include="BLITVars.h" />
     <ClInclude Include="Canvas.h" />
@@ -146,8 +147,10 @@
     <ClInclude Include="GlobalDefines.h" />
     <ClInclude Include="ImageDef.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Rasterization.h" />
     <ClInclude Include="RasterSurface.h" />
     <ClInclude Include="ScreenBounds.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="tiles_12.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector2.h" />

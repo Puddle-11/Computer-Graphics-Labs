@@ -8,18 +8,7 @@ public:
 	Matrix(float matrixValue[4][4]);
 	void SetMatrix(float matrixValue[4][4]);
 	std::string ToString();
-private:
+	Matrix operator*(Matrix _ref);
 
 };
-Matrix::Matrix()
-{
-	float arr[4][4] =
-	{
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-		{0, 0, 0, 0} ,
-		{0, 0, 0, 0}
 
-	};
-	SetMatrix(arr);
-}

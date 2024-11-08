@@ -1,13 +1,10 @@
 #pragma once
 class Color
 {
-private:
-
-	//i use two values for the sake of speed, and not having to convert everyt ime i want to get a color
-	unsigned int ARGBcolor = 0;
-	unsigned int ABGRcolor = 0;
 
 public:
+	unsigned int ARGBcolor = 0;
+	unsigned int ABGRcolor = 0;
 
 	Color();
 	Color(unsigned int _color);
