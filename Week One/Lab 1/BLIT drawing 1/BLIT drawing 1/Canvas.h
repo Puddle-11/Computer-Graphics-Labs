@@ -4,9 +4,6 @@
 #include "BLITVars.h"
 #include "ScreenBounds.h"
 
-
-
-
 //Variables
 unsigned int* image_pixels = nullptr;
 const unsigned int layerCount = 2;
@@ -298,13 +295,22 @@ void DrawLine(VertexScreen _p1, VertexScreen _p2)
 	}
 }
 
+
+void DrawCircle(float _radius, Color c1, Color c2, Vector2Int _pos)
+{
+
+
+
+
+
+}
 void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire, Vector2Int _position)
 {
 	VertexScreen* temp = new VertexScreen[_vertCount];
 	for (int i = 0; i < _vertCount; i++)
 	{
-		float x = _size * (float)cos(2 * M_PI * i / _vertCount);
-		float y = _size * (float)sin(2 * M_PI * i / _vertCount);
+		float x = _size * (float)cos((2 * M_PI * i / _vertCount) + M_PI / 8);
+		float y = _size * (float)sin((2 * M_PI * i / _vertCount) + M_PI / 8);
 		x = (float)floor(x + 0.5) + _position.x;
 		y = (float)floor(y + 0.5) + _position.y;
 		temp[i].point = Vector2Int((int)x, (int)y);

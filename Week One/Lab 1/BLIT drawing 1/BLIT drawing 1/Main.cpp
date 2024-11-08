@@ -37,10 +37,12 @@ int main()
 	Vector2Int temp = Vector2Int(0, 1);
 	temp = temp * 2 + Vector2Int(5, 0) - Vector2Int(3, 0);
 	std::cout << temp.ToString();
-
-
+	
 	ClearBuffer();
-	DrawRegularPolygon(100, 13, Color::Yellow(), Color::Magenta(), true, center);
+	
+	DrawRegularPolygon(100, 20000, Color::Cyan(), Color::Magenta(), false, center);
+
+
 	RasterizeLayers();
 	RS_Initialize("Rowan Byington Lab 2", mainBounds.Width, mainBounds.Height);
 	do
