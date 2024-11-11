@@ -4,12 +4,16 @@
 #include "Mesh.h"
 #include "Vector2.h"
 #include "Vector3.h"
+#include <vector>
 void DrawShaderLine(Vertex4D& p1, Vertex4D& p2);
 void DrawMesh(Mesh& m);
 void WorldtoNDC();
 
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/);
-
+void DrawPlane(Vector2 _size, int cells, Color c1);
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2);
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3);
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4);
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/)
 {
 
@@ -23,34 +27,66 @@ Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/)
 
 	return Vector2Int((int)_NDCpos.x, (int)_NDCpos.y);
 }
-
-
-void DrawPlane(Vector2 _size, int cells, Color c)
+void DrawPlane(Vector2 _size, int cells, Color c1)
 {
-	Vertex4D p1, p2, p3, p4;
-
-
-	for (size_t i = 0; i < cells + 1; i++)
-	{
-
-		p1.point = Vector4(_size.x / 2, 0, _size.y/(float)cells * i - (_size.y/2), 1);
-		p2.point = Vector4(-_size.x / 2, 0, _size.y / (float)cells * i - (_size.y / 2), 1);
-
-		p3.point = Vector4(_size.x / (float)cells * i - (_size.y / 2), 0, + (_size.y / 2), 1);
-		p4.point = Vector4(_size.y / (float)cells * i - (_size.y / 2), 0,-(_size.y / 2), 1);
-
-		p1.vertColor = c;
-		p2.vertColor = c;
-		p3.vertColor = c;
-		p4.vertColor = c;
-
-		DrawShaderLine(p3,p4);
-		DrawShaderLine(p1, p2);
-
-	}
-
-
+	DrawPlane(_size, cells, c1, c1, c1, c1);
 }
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2)
+{
+	DrawPlane(_size, cells, c1, c2, c1, c2);
+}
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3)
+{
+	DrawPlane(_size, cells, c1, c2, c3, c2);
+}
+void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4)
+{
+
+	std::vector<std::vector<Vertex4D>> points;
+	for (int x = 0; x < cells + 1; x++)
+	{
+		points.push_back(std::vector<Vertex4D>());
+		for (int y = 0; y < cells + 1; y++)
+		{
+			points[x].push_back(Vertex4D(Vector4(x * _size.x - ((_size.x * cells - 1) / 2), 0, y * _size.y - ((_size.y * cells - 1) / 2), 1), c1));
+			
+			Color c = c1;
+			Color yCol;
+			Color xCol;
+			float xRatio = x / ((float)cells + 1);
+			float yRatio = y / ((float)cells + 1);
+			xCol = Color::CLerp(c1, c2, xRatio * 255);
+			yCol = Color::CLerp(c3, c4, xRatio * 255);
+			c = Color::CLerp(xCol, yCol, yRatio * 255);
+			points[x][y].vertColor = c;
+			Vector4 vec = points[x][y].point;
+
+		}
+	}
+	for (int x = 0; x < cells; x++)
+	{
+		for (int y = 0; y < cells; y++)
+		{
+			if (x == cells - 1 && y < cells - 1)
+			{
+
+				DrawShaderLine(points[x][y], points[x][y + 1]);
+
+			}
+			else if (y == cells - 1 && x < cells - 1)
+			{
+				DrawShaderLine(points[x][y], points[x + 1][y]);
+
+			}
+			else if (x < cells - 1 && y < cells - 1)
+			{
+				DrawShaderLine(points[x][y], points[x + 1][y]);
+				DrawShaderLine(points[x][y], points[x][y + 1]);
+			}
+		}
+	}
+}
+
 void DrawMesh(Mesh& m)
 {
 
@@ -60,9 +96,7 @@ void DrawMesh(Mesh& m)
 		{
 			if ((i + 1) % 3 == 0)
 			{
-				if (i <= 2) continue;
-				if (!(m.triangles[i - 2] >= 0 || m.triangles[i - 2] < m.vertCount)) continue;
-
+				
 				DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i - 2]]);
 			}
 			else

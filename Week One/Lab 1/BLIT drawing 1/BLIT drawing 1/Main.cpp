@@ -21,8 +21,6 @@ int main()
 	_CrtSetBreakAlloc(-1); // set block of memory to find memory leak
 	_CrtDumpMemoryLeaks();
 
-
-
 	timer = XTime();
 	srand((unsigned int)time(NULL));
 	image_pixels = new unsigned int[imagePixelCount];
@@ -32,43 +30,8 @@ int main()
 	mainBounds.Height = ImageHeight;
 
 	center = Vector2Int(mainBounds.Width / 2, mainBounds.Height / 2);
-
-	Mesh Cube;
-
-	Vertex4D line[8]{
-
-		Vertex4D(Vector4(-0.5, -0.5, 0.5, 1), Color::Red()),
-		Vertex4D(Vector4(-0.5, 0.5, 0.5, 1), Color::Green()),
-		Vertex4D(Vector4(0.5, 0.5, 0.5, 1), Color::Blue()),
-		Vertex4D(Vector4(0.5, -0.5, 0.5, 1), Color::Magenta()),
-
-		Vertex4D(Vector4(-0.5, -0.5, -0.5, 1), Color::Cyan()),
-		Vertex4D(Vector4(-0.5, 0.5,  -0.5, 1), Color::Yellow()),
-		Vertex4D(Vector4(0.5, 0.5,  -0.5, 1), Color::White()),
-		Vertex4D(Vector4(0.5, -0.5, -0.5, 1), Color::Grey()),
-	};
-	int tris[36]{
-
-		0,1,2,
-		3,2,0,
-
-		4,5,6,
-		7,6,4,
-
-		0,4,5,
-		5,1,0,
-
-		3,7,6,
-		6,2,3,
-
-		1,5,2,
-		5,6,2,
-
-		0,4,3,
-		4,7,3,
-	};
-	Cube.SetVerts(line, 8);
-	Cube.SetTris(tris, 36);
+	Mesh Cube(Mesh::Cube());
+	Mesh Pyramid(Mesh::SquarePyramid());
 
 	VertexShader = ToWorld;
 	PixelShader = nullptr;
@@ -83,8 +46,7 @@ int main()
 
 
 
-	SV_Proj = Matrix::ProjectionMatrix(0.1, 10, 90, 1);
-	
+	SV_Proj = Matrix::ProjectionMatrix(0.1, 10, 90, AspectRatio);
 
 
 
@@ -123,22 +85,63 @@ int main()
 			cameraPos.y -= timer.Delta() * cameraSpeed;
 		}
 
-		SV_WorldMatrix = Matrix::Identity() * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 2, 0);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 2, 0);
 		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(-(p.y - 500 )/ (float)400) * Matrix::YRotationMatrix(-(p.x - 1000) / (float)400);
 		CameraMatrix = Matrix::Identity() * CameraRotationMatrix * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z);
 
 		SV_View = Matrix::Invert(CameraMatrix);
 
 
-		PixelShader = nullptr;
+		PixelShader = White;
 
 		ClearBuffer();
+
+		DrawMesh(Pyramid);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(-time) * Matrix::TranslationMatrix(0, 6, 0);
+
+		DrawMesh(Pyramid);
+
+		PixelShader = Violet;
+
+		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(2.5, 0.5, -2.5);
 		DrawMesh(Cube);
+		PixelShader = Blue;
+
+		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(2.5, 0.5, 2.5);
+		DrawMesh(Cube);
+		PixelShader = Orange;
+
+		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(-2.5, 0.5, -2.5);
+		DrawMesh(Cube);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(-2.5, 0.5, 2.5);
+		DrawMesh(Cube);
+
+
+
+
+		PixelShader = White;
+
+
+
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(2, 3, 0) * Matrix::YRotationMatrix(time);
+		DrawMesh(Cube);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(-2, 3, 0) * Matrix::YRotationMatrix(time);
+		DrawMesh(Cube);
+	
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, 2) * Matrix::YRotationMatrix(-time);
+		DrawMesh(Cube);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, -2) * Matrix::YRotationMatrix(-time);
+		DrawMesh(Cube);
+
+
+
+
+
 
 		SV_WorldMatrix = Matrix::Identity();
 		PixelShader = nullptr;
 
-		DrawPlane(Vector2(5, 5), 5, Color::Green());
+		DrawPlane(Vector2(1, 1), 9, Color::Blue(), Color::Yellow(), Color::Red());
 
 	} while (RS_Update(image_pixels, imagePixelCount));
 	RS_Shutdown();

@@ -26,6 +26,46 @@ void White(VertexScreen& _pixel)
 {
 	_pixel.vertColor = Color::White();
 }
+void Green(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Green();
+
+}
+void Blue(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Blue();
+
+}
+void Red(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Red();
+
+}
+void Orange(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Orange();
+
+}
+void Violet(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Violet();
+
+}
+void Magenta(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Magenta();
+
+}
+void Yellow(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Yellow();
+
+}
+void Cyan(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Cyan();
+
+}
 void Depth(VertexScreen& _pixel)
 {
 	float z = ((_pixel.GetZ()) / 10);
@@ -33,7 +73,15 @@ void Depth(VertexScreen& _pixel)
 	if (z < 0) z = 0;
 	_pixel.vertColor = Color::CLerp(Color::Black(), Color::White(), z * 255);
 }
+void Rainbow(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::Black();
+	_pixel.vertColor.SetRed(_pixel.point.x / (float)ImageWidth * 255);
+	_pixel.vertColor.SetGreen(_pixel.point.y / (float)ImageHeight * 255);
 
+	_pixel.vertColor.SetBlue((_pixel.GetZ()) / 10 * 255);
+
+}
 //TODO: NDCtoScreen
 
 //TODO: Vertex Shader

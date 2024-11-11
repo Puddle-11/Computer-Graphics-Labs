@@ -65,9 +65,11 @@ public:
 	static Color Magenta() { return Color(0xFFFF00FF); }
 	static Color Yellow() { return Color(0xFFFFFF00); }
 	static Color Cyan() { return Color(0xFF00FFFF); }
+	static Color Orange() { return Color(0xFFFF7f00); };
+	static Color Violet() { return Color(0xFF7f00FF); }
 	static Color Black() { return Color(0xFF000000); }
+	static Color Grey() { return Color(0x77777777); }
 	static Color White() { return Color(0xFFFFFFFF); }
 	static Color Transparent() { return Color(0x00000000); }
 	static Color Zero() { return Color(0x00000000); }
-	static Color Grey() { return Color(0x77777777); }
 };

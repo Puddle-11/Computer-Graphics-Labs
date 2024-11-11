@@ -5,6 +5,7 @@ class Mesh
 public:
 	Mesh();
 	~Mesh();
+	Mesh(const Mesh& _ref);
 	int vertCount;
 	int triCount;
 	Vector4 center = Vector4::Zero();
@@ -13,6 +14,13 @@ public:
 	void Rotate(Matrix rotationMatrix);
 	void SetColor(Color objCol);
 	void Transform(Vector4 _offset);
+	Mesh operator=(const Mesh& _ref);
+
+	static Mesh TrianglePyramid();
+	static Mesh SquarePyramid();
+
+	static Mesh Cube();
+
 	Vertex4D* verticies;
 	Color objectColor;
 	int* triangles;
