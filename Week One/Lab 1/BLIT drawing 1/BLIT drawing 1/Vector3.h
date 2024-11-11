@@ -1,10 +1,12 @@
 #pragma once
+#include <string>
+#include "Matrix.h"
 class Vector3
 {
 public:
-	float x = 0;
-	float y = 0;
-	float z = 0;
+	float x;
+	float y;
+	float z;
 	Vector3();
 	Vector3(float _x, float _y, float _z);
 	Vector3 operator+(Vector3 const& _ref);
@@ -17,6 +19,8 @@ public:
 	Vector3 operator*(int const& _ref);
 	Vector3 operator/(float const& _ref);
 	Vector3 operator*(float const& _ref);
+	Vector3 operator*(Matrix const& _ref);
+	std::string ToString();
 	static Vector3 Zero();
 	static Vector3 One();
 	static Vector3 Left();
@@ -25,5 +29,6 @@ public:
 	static Vector3 Down();
 	static Vector3 Forward();
 	static Vector3 Backward();
+
 };
 

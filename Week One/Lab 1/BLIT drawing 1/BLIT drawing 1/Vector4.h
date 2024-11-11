@@ -1,4 +1,6 @@
 #pragma once
+#include "Matrix.h"
+#include <iostream>
 class Vector4
 {
 public:
@@ -18,8 +20,9 @@ public:
 	Vector4 operator*(int const& _ref);
 	Vector4 operator/(float const& _ref);
 	Vector4 operator*(float const& _ref);
+	Vector4 operator*(Matrix m);
 	float Total();
-
+	std::string ToString();
 	static float DotProduct(Vector4 v1, Vector4 v2);
 
 	static Vector4 Zero();

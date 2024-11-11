@@ -1,9 +1,6 @@
 #pragma once
 #include <cmath>
-#include "Vector2Int.h"
-#include "Vector3.h"
-#include "Vector2.h"
-#include "vector4.h"
+
 #include "GlobalDefines.h"
 
 static Vector2Int IndexToPos(int _index, int _width);
@@ -35,11 +32,8 @@ static Vector2Int IndexToPos(int _index, int _width)
 	res.y = (int)floor((float)_index / (float)_width);
 	return res;
 }
-static Vector2Int NDCtoScreen(Vector3 _NDCPos)
-{
 
-}
-static Vector3 ScreenToNDC()
+static Vector4 ScreenToNDC()
 {
 
 }

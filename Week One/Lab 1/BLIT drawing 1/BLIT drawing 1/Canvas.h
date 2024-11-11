@@ -1,9 +1,6 @@
 #pragma once
-#include "Vector2Int.h"
-#include "Color.h"
+#include "GlobalDefines.h"
 #include "BLITVars.h"
-#include "ScreenBounds.h"
-
 //Variables
 unsigned int* image_pixels = nullptr;
 const unsigned int layerCount = 2;
@@ -212,27 +209,32 @@ void ResetPixel(int _index, int _layerIndex)
 	}
 }
 
+
 void ClearBuffer()
 {
 	ClearLayers(0);
 }
 void ClearLayers(int _index)
 {
-	for (int x = 0; x < imagePixelCount; x++)
+	if (_index == 0)
 	{
-		ResetPixel(x, _index);
+		std::fill(image_pixels, image_pixels + imagePixelCount, Color::Black().GetARGB());
+
+	}
+	else
+	{
+		std::fill(std::begin(layers[_index]), std::end(layers[_index]), 0);
 
 	}
 }
 void ClearLayers()
 {
-	for (int x = 0; x < imagePixelCount; x++)
+
+	for (int i = 1; i < layerCount + 1; i++)
 	{
-		for (int i = 1; i < layerCount + 1; i++)
-		{
-			ResetPixel(x, i);
-		}
+		ClearLayers(i);
 	}
+
 }
 
 void DrawRect(Vector2Int _min, Vector2Int _max, Color _color, bool _fill, int _layerIndex)
@@ -291,26 +293,18 @@ void DrawLine(VertexScreen _p1, VertexScreen _p2)
 		r = (float)i / (float)abs(maxChange);
 		currPos = Vector2Int((int)floor(lerp((float)_p1.point.x, (float)_p2.point.x, r) + 0.5), (int)floor(lerp((float)_p1.point.y, (float)_p2.point.y, r) + 0.5));
 		Color c = Color::CLerp(_p2.vertColor, _p1.vertColor, (int)(r * 255));
-		Plot(currPos, c, 1);
+		Plot(currPos, c, 0);
 	}
 }
 
 
-void DrawCircle(float _radius, Color c1, Color c2, Vector2Int _pos)
-{
-
-
-
-
-
-}
 void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire, Vector2Int _position)
 {
 	VertexScreen* temp = new VertexScreen[_vertCount];
 	for (int i = 0; i < _vertCount; i++)
 	{
-		float x = _size * (float)cos((2 * M_PI * i / _vertCount) + M_PI / 8);
-		float y = _size * (float)sin((2 * M_PI * i / _vertCount) + M_PI / 8);
+		float x = _size * (float)cos((2 * M_PI * i / _vertCount) - M_PI / 2);
+		float y = _size * (float)sin((2 * M_PI * i / _vertCount) - M_PI / 2);
 		x = (float)floor(x + 0.5) + _position.x;
 		y = (float)floor(y + 0.5) + _position.y;
 		temp[i].point = Vector2Int((int)x, (int)y);

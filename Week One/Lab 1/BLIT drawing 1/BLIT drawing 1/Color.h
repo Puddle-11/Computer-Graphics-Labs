@@ -3,8 +3,8 @@ class Color
 {
 
 public:
-	unsigned int ARGBcolor = 0;
-	unsigned int ABGRcolor = 0;
+	unsigned int ARGBcolor;
+	unsigned int ABGRcolor;
 
 	Color();
 	Color(unsigned int _color);
@@ -69,4 +69,5 @@ public:
 	static Color White() { return Color(0xFFFFFFFF); }
 	static Color Transparent() { return Color(0x00000000); }
 	static Color Zero() { return Color(0x00000000); }
+	static Color Grey() { return Color(0x77777777); }
 };

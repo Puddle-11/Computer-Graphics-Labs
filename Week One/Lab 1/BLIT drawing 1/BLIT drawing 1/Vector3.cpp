@@ -95,6 +95,24 @@ Vector3 Vector3::operator*(float const& _ref)
 	res.z = this->z * _ref;
 	return res;
 }
+std::string Vector3::ToString()
+{
+	std::string res = "";
+	res = std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z);
+	return res;
+
+}
+Vector3 Vector3::operator*(Matrix const& _ref)
+{
+
+	Vector3 res;
+	res.x = (x * _ref.matrixValues[0][0]) + (y * _ref.matrixValues[1][0]) + (z * _ref.matrixValues[2][0]);
+	res.y = (x * _ref.matrixValues[0][1]) + (y * _ref.matrixValues[1][1]) + (z * _ref.matrixValues[2][1]);
+	res.z = (x * _ref.matrixValues[0][2]) + (y * _ref.matrixValues[1][2]) + (z * _ref.matrixValues[2][2]);
+	return res;
+
+}
+
  Vector3 Vector3::Zero() { return Vector3(0, 0, 0); }
  Vector3 Vector3::One() { return Vector3(1, 1, 1); }
  Vector3 Vector3::Left() { return Vector3(-1, 0, 0); }
