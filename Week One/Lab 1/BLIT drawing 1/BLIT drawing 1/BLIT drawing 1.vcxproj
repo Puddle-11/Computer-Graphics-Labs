@@ -146,7 +146,9 @@
     <ClInclude Include="BLITVars.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="fire_01.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GlobalDefines.h" />
     <ClInclude Include="ImageDef.h" />
     <ClInclude Include="Matrix.h" />
@@ -156,6 +158,7 @@
     <ClInclude Include="ScreenBounds.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiles_12.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector4.h" />

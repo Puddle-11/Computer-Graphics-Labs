@@ -12,7 +12,6 @@
 #include "Rasterization.h"
 #include "Vector3.h"
 #include "RasterSurface.h"
-
 Vector2Int center;
 XTime timer;
 int main()
@@ -54,10 +53,21 @@ int main()
 	float time = 0;
 
 	Vector3 cameraPos = Vector3(0, 3, -3);
+		ClearBuffer();
+		VertexScreen triPoints[]{
+			VertexScreen(Vector2Int(0,-50) + center, Color::Lime()),
+			VertexScreen(Vector2Int(100,50) + center, Color::Cyan()),
+			VertexScreen(Vector2Int(-100,50) + center, Color::Teal())
+
+		};
+		DrawLine(triPoints[0], triPoints[1]);
+		DrawLine(triPoints[1], triPoints[2]);
+		DrawLine(triPoints[2], triPoints[0]);
+
 	RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
 	do
 	{
-		timer.Signal();
+	/*	timer.Signal();
 		POINT p;
 		GetCursorPos(&p);
 		time += timer.Delta();
@@ -98,7 +108,8 @@ int main()
 			gDown = false;
 
 		}
-		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 2, 0);
+
+
 		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(-(p.y - 500) / (float)400) * Matrix::YRotationMatrix(-(p.x - 1000) / (float)400);
 		CameraMatrix = Matrix::Identity() * CameraRotationMatrix * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z);
 
@@ -112,8 +123,9 @@ int main()
 
 		if (currentScene == 0)
 		{
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
 			DrawMesh(Pyramid);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(-time) * Matrix::TranslationMatrix(0, 6, 0);
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(-time) * Matrix::TranslationMatrix(0, 1, 0);
 
 			DrawMesh(Pyramid);
 
@@ -130,14 +142,14 @@ int main()
 			SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(-2.5, 0.5, 2.5);
 			DrawMesh(Cube);
 			PixelShader = White;
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(2, 3, 0) * Matrix::YRotationMatrix(time);
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(2, 5, 0) * Matrix::YRotationMatrix(time);
 			DrawMesh(Cube);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(-2, 3, 0) * Matrix::YRotationMatrix(time);
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(-2, 5, 0) * Matrix::YRotationMatrix(time);
 			DrawMesh(Cube);
 
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, 2) * Matrix::YRotationMatrix(-time);
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, 2) * Matrix::YRotationMatrix(time);
 			DrawMesh(Cube);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, -2) * Matrix::YRotationMatrix(-time);
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, -2) * Matrix::YRotationMatrix(time);
 			DrawMesh(Cube);
 			PixelShader = Orange;
 
@@ -154,10 +166,10 @@ int main()
 		{
 			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 3, 0);
 			DrawMesh(Pyramid);
-		PixelShader = Teal;
+			PixelShader = Teal;
 		}
 		SV_WorldMatrix = Matrix::Identity();
-		DrawPlane(Vector2(1, 1), 9, Color::Orange());
+		DrawPlane(Vector2(1, 1), 9, Color::Orange());*/
 
 
 

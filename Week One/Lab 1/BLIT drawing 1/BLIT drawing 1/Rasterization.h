@@ -14,6 +14,32 @@ void DrawPlane(Vector2 _size, int cells, Color c1);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4);
+
+
+
+void fillTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3)
+{
+	Vector3 currPointBC;
+
+	for (int x = 0;  x < ImageWidth;  x++)
+	{
+		for (int y = 0; y < ImageWidth; y++)
+		{
+
+
+
+
+		}
+	}
+
+
+
+
+
+
+}
+
+
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/)
 {
 

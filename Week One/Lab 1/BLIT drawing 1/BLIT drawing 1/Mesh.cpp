@@ -1,6 +1,6 @@
-
+#define _USE_MATH_DEFINES
 #include "Mesh.h"
-
+#include <cmath>
 Mesh::Mesh()
 {
 	verticies = new Vertex4D[0];
@@ -32,8 +32,30 @@ Mesh::Mesh(const Mesh& _ref)
 	this->SetTris(_ref.triangles, _ref.triCount);
 	this->SetVerts(_ref.verticies, _ref.vertCount);
 }
-static Mesh TrianglePyramid()
+ Mesh Mesh::TrianglePyramid()
 {
+	 Mesh m;
+
+	 Vertex4D pyramidVerts[4]
+	 {
+	 Vertex4D(Vector4(-1/(2 * sqrt(3)),0,-0.5,1), Color::White()),
+	 Vertex4D(Vector4(1/sqrt(3),0,0,1), Color::White()),
+	 Vertex4D(Vector4(-1/(2 * sqrt(3)),0,0.5,1), Color::White()),
+	 Vertex4D(Vector4(0,1,0,1), Color::White()),
+	 };
+	 
+	 int pyramimdTris[12]{
+		0,1,3,
+
+		1,2,3,
+
+		2,0,3,
+
+		0,1,2,
+	 };
+	 m.SetTris(pyramimdTris, 12);
+	 m.SetVerts(pyramidVerts, 4);
+	 return m;
 
 
 }
