@@ -3,6 +3,7 @@
 #include "BLITVars.h"
 //Variables
 unsigned int* image_pixels = nullptr;
+float* depth_pixels = nullptr;
 const unsigned int layerCount = 2;
 unsigned int layers[layerCount][imagePixelCount];
 
@@ -14,12 +15,21 @@ ScreenBounds fireAnimBounds;
 
 
 //Decleration
+float AccessPixelDepth(int x, int y, ScreenBounds _bounds, const float* _array);
+float AccessPixelDepth(Vector2Int _pos, ScreenBounds _bounds, const float* _array);
+float AccessPixelDepth(int _index, const unsigned int* _array);
+
+
 void Plot(int x, int y, unsigned int _color, int _layerIndex);
 void Plot(int x, int y, Color _color, int _layerIndex);
 void Plot(Vector2Int _pos, Color _color, int _layerIndex);
 void Plot(Vector2Int _pos, unsigned int _color, int _layerIndex);
 void Plot(int _index, Color _color, int _layerIndex);
 void Plot(int _index, unsigned int _color, int _layerIndex);
+
+void PlotDepth(int x, int y, float _depth);
+void PlotDepth(Vector2Int _pos, float _depth);
+void PlotDepth(int _index, float _depth);
 
 void ResetPixel(int _index, int _layerIndex);
 
@@ -47,7 +57,7 @@ void DrawLine(VertexScreen _p1, VertexScreen _p2);
 void DrawLineSet(const VertexScreen* _points, int _pointCount);
 void DrawPolygon(const VertexScreen* _points, int _pointCount);
 void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire = true, Vector2Int _position = Vector2Int::Zero());
-
+void DrawTriangle(VertexScreen p1, VertexScreen p2, VertexScreen p3);
 void Copy(Vector2Int _srcMin, Vector2Int _srcMax, Vector2Int _cpyPos, Vector2Int _offset, bool _center, const unsigned int* _src, ScreenBounds _srcBounds, int _layerIndex)
 {
 	Color pixelColor;
@@ -73,7 +83,25 @@ void Copy(Vector2Int _scrMin, Vector2Int _scrMax, Vector2Int _cpyPos, bool _cent
 {
 	Copy(_scrMin, _scrMax, _cpyPos, Vector2Int(0, 0), _center, _src, _srcBounds, _layerIndex);
 }
+void DrawTriangle(VertexScreen p1, VertexScreen p2, VertexScreen p3, Color c)
+{
+	//coordinates are relative using p1 as origin, p1->p2 as beta and p1->p3 as delta
 
+	for (int x = 0; x < ImageWidth; x++)
+	{
+		for (int y = 0; y < ImageHeight; y++)
+		{
+			Vector3 p;
+			Vector2Int tp = Vector2Int(x,y);
+			//beta is the x axis relative to the triangle
+			p.x = ILE(p1.point, p2.point, tp) / ILE(p1.point, p2.point, p3.point);
+			//gamma is the y axis relative to the triangle
+			p.y = ILE(p1.point, p3.point, tp) / ILE(p1.point, p3.point, p2.point);
+			
+			if (p.x + p.y <= 1 && p.x >= 0 && p.y >= 0) Plot(tp, c, 0);
+		}
+	}
+}
 
 void RasterizeRange(Vector2Int _min, Vector2Int _max)
 {
@@ -196,6 +224,51 @@ Color Access(Vector2Int _pos, ScreenBounds _bounds, const unsigned int* _array)
 	return res;
 }
 
+
+
+void PlotDepth(int x, int y, float _depth)
+{
+	PlotDepth(Vector2Int(x, y), _depth);
+}
+void PlotDepth(Vector2Int _pos, float _depth)
+{
+	if (InScreenBounds(_pos))
+	{
+
+		PlotDepth(ToIndex(_pos), _depth);
+	}
+}
+void PlotDepth(int _index, float _depth)
+{
+	if (_index > imagePixelCount) return;
+	depth_pixels[_index] = _depth;
+
+}
+
+
+
+
+
+
+float AccessPixelDepth(int x, int y, ScreenBounds _bounds, const float* _array)
+{
+	return AccessPixelDepth(Vector2Int(x,y), _bounds, _array);
+}
+float AccessPixelDepth(Vector2Int _pos, ScreenBounds _bounds, const float* _array)
+{
+	if (_pos.x >= (int)_bounds.Width || _pos.x < 0 || _pos.y >= (int)_bounds.Height || _pos.y < 0) return 0;
+	float res;
+	res = _array[ToIndex(_pos, _bounds.Width)];
+	return res;
+}
+float AccessPixelDepth(int _index, const unsigned int* _array)
+{
+	float res;
+	res = _array[_index];
+	return res;
+}
+
+
 void ResetPixel(int _index, int _layerIndex)
 {
 
@@ -219,6 +292,7 @@ void ClearLayers(int _index)
 	if (_index == 0)
 	{
 		std::fill(image_pixels, image_pixels + imagePixelCount, Color::Black().GetARGB());
+		std::fill(depth_pixels, depth_pixels + imagePixelCount, FarPlane);
 
 	}
 	else
@@ -308,7 +382,7 @@ void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire
 		x = (float)floor(x + 0.5) + _position.x;
 		y = (float)floor(y + 0.5) + _position.y;
 		temp[i].point = Vector2Int((int)x, (int)y);
-		if(i > _vertCount / 2)
+		if (i > _vertCount / 2)
 		{
 			temp[i].vertColor = Color::CLerp(c, c2, (int)(((_vertCount - i) / (float)_vertCount * 2) * 255));
 		}
@@ -322,7 +396,7 @@ void DrawRegularPolygon(int _size, int _vertCount, Color c, Color c2, bool _wire
 		for (int i = 0; i < _vertCount; i++)
 		{
 			int oposingIndex = (i + _vertCount / 2) % _vertCount;
-			DrawLine(temp[i], VertexScreen(Vector2Int(_position.x, _position.y), Color::CLerp( temp[i].vertColor, temp[oposingIndex].vertColor, 0.5*255)));
+			DrawLine(temp[i], VertexScreen(Vector2Int(_position.x, _position.y), Color::CLerp(temp[i].vertColor, temp[oposingIndex].vertColor, 0.5 * 255)));
 		}
 
 	}

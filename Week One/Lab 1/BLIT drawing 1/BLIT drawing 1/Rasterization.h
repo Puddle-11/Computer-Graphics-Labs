@@ -14,30 +14,10 @@ void DrawPlane(Vector2 _size, int cells, Color c1);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4);
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c);
 
 
 
-void fillTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3)
-{
-	Vector3 currPointBC;
-
-	for (int x = 0;  x < ImageWidth;  x++)
-	{
-		for (int y = 0; y < ImageWidth; y++)
-		{
-
-
-
-
-		}
-	}
-
-
-
-
-
-
-}
 
 
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/)
@@ -75,7 +55,7 @@ void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4)
 		for (int y = 0; y < cells + 1; y++)
 		{
 			points[x].push_back(Vertex4D(Vector4(x * _size.x - ((_size.x * cells - 1) / 2), 0, y * _size.y - ((_size.y * cells - 1) / 2), 1), c1));
-			
+
 			Color c = c1;
 			Color yCol;
 			Color xCol;
@@ -120,15 +100,112 @@ void DrawMesh(Mesh& m)
 	{
 		if (m.triangles[i] >= 0 || m.triangles[i] < m.vertCount)
 		{
-			if ((i + 1) % 3 == 0)
+			if (i % 3 == 0)
 			{
-				DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i - 2]]);
+				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], m.verticies[m.triangles[i]].vertColor);
 			}
-			else
-			{
-				if (!(m.triangles[i - 2] >= 0 || m.triangles[i - 2] < m.vertCount)) continue;
 
-				DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]]);
+			/*if ((i) % 3 == 0)
+			{
+				if ((i + 1) % 3 == 0)
+				{
+					DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i - 2]]);
+				}
+				else
+				{
+					if (!(m.triangles[i - 2] >= 0 || m.triangles[i - 2] < m.vertCount)) continue;
+
+					DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]]);
+				}
+			}
+			*/
+		}
+	}
+}
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c)
+{
+
+	Vertex4D cpy1 = p1;
+	Vertex4D cpy2 = p2;
+	Vertex4D cpy3 = p3;
+
+	if (VertexShader)
+	{
+		VertexShader(cpy1);
+		VertexShader(cpy2);
+		VertexShader(cpy3);
+
+	}
+	//coordinates are relative using p1 as origin, p1->p2 as beta and p1->p3 as delta
+	VertexScreen sp1;
+	VertexScreen sp2;
+	VertexScreen sp3;
+	Vector2Int min;
+	Vector2Int max;
+
+	sp1.point = NDCtoScreen(cpy1.point);
+	sp2.point = NDCtoScreen(cpy2.point);
+	sp3.point = NDCtoScreen(cpy3.point);
+
+	min.x = std::min(sp1.point.x, sp2.point.x);
+	min.y = std::min(sp1.point.y, sp2.point.y);
+						 					 
+	max.x = std::max(sp1.point.x, sp2.point.x);
+	max.y = std::max(sp1.point.y, sp2.point.y);
+
+	min.x = min.x > sp3.point.x ? sp3.point.x : min.x;
+	min.y = min.y > sp3.point.y ? sp3.point.y : min.y;
+
+	max.x = max.x < sp3.point.x ? sp3.point.x : max.x;
+	max.y = max.y < sp3.point.y ? sp3.point.y : max.y;
+	sp1.vertColor = c;
+	sp2.vertColor = c;
+	sp3.vertColor = c;
+	float alpha;
+	for (int x = min.x; x < max.x; x++)
+	{
+		for (int y = min.y; y < max.y; y++)
+		{
+			Vector3 p;
+			Vector2Int tp = Vector2Int(x, y);
+
+
+			p.x = (sp2.point.y - sp3.point.y) * (tp.x - sp3.point.x) + (sp3.point.x - sp2.point.x) * (tp.y - sp3.point.y);
+			p.x = p.x / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x - sp2.point.x) * (sp1.point.y - sp3.point.y));
+
+			p.y = (sp3.point.y - sp1.point.y) * (tp.x - sp3.point.x) + (sp1.point.x - sp3.point.x) * (tp.y - sp3.point.y);
+			p.y = p.y / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x-sp2.point.x)*(sp1.point.y-sp3.point.y));
+			p.z = 1 - p.x - p.y;
+			Color p1c = p1.vertColor;
+			Color p2c = p2.vertColor;
+			Color p3c = p3.vertColor;
+
+			alpha = (cpy1.point.w * p.x + cpy2.point.w * p.y + cpy3.point.w * p.z);
+
+			unsigned int wRed = (p1c.GetRed() * p.x + p2c.GetRed() * p.y + p3c.GetRed() * p.z);
+			unsigned int wGreen = (p1c.GetGreen() * p.x + p2c.GetGreen() * p.y + p3c.GetGreen() * p.z);
+			unsigned int wBlue = (p1c.GetBlue() * p.x + p2c.GetBlue() * p.y + p3c.GetBlue() * p.z);
+
+			c.SetGreen(wGreen);
+			c.SetRed(wRed);
+			c.SetBlue(wBlue);
+
+
+
+			/*float z = ((alpha) / 5);
+			if (z > 1) z = 1;
+			if (z < 0) z = 0;
+			c = Color::CLerp(Color::Black(), Color::White(), z * 255);*/
+
+			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
+			{
+				if (alpha < AccessPixelDepth(x, y, mainBounds, depth_pixels))
+				{
+
+					Plot(tp, c, 0);
+					PlotDepth(tp, alpha);
+				}
+				
 			}
 		}
 	}
@@ -140,10 +217,6 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 	Vertex4D cpy1 = p1;
 	Vertex4D cpy2 = p2;
 
-	if (PixelShader)
-	{
-
-	}
 	if (VertexShader)
 	{
 		VertexShader(cpy1);

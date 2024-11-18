@@ -4,6 +4,8 @@
 
 // info about this application
 #define _USE_MATH_DEFINES
+#define NOMINMAX
+
 #include <iostream>
 #include <cmath>
 #include "tiles_12.h"
@@ -23,6 +25,7 @@ int main()
 	timer = XTime();
 	srand((unsigned int)time(NULL));
 	image_pixels = new unsigned int[imagePixelCount];
+	depth_pixels = new float[imagePixelCount];
 
 	float cameraSpeed = 2;
 	int currentScene = 0;
@@ -52,22 +55,13 @@ int main()
 
 	float time = 0;
 
-	Vector3 cameraPos = Vector3(0, 3, -3);
+	Vector3 cameraPos = Vector3(0, 5, -3);
 		ClearBuffer();
-		VertexScreen triPoints[]{
-			VertexScreen(Vector2Int(0,-50) + center, Color::Lime()),
-			VertexScreen(Vector2Int(100,50) + center, Color::Cyan()),
-			VertexScreen(Vector2Int(-100,50) + center, Color::Teal())
-
-		};
-		DrawLine(triPoints[0], triPoints[1]);
-		DrawLine(triPoints[1], triPoints[2]);
-		DrawLine(triPoints[2], triPoints[0]);
 
 	RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
 	do
 	{
-	/*	timer.Signal();
+	   timer.Signal();
 		POINT p;
 		GetCursorPos(&p);
 		time += timer.Delta();
@@ -120,14 +114,31 @@ int main()
 
 		ClearBuffer();
 
+			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
+		
+
+		Mesh m = Mesh(Mesh::Cube());
+
+		m.verticies[0].vertColor = Color::Red();
+		m.verticies[1].vertColor = Color::Magenta();
+		m.verticies[2].vertColor = Color::White();
+		m.verticies[3].vertColor = Color::Yellow();
+
+		m.verticies[4].vertColor = Color::Black();
+		m.verticies[5].vertColor = Color::Blue();
+		m.verticies[6].vertColor = Color::Cyan();
+		m.verticies[7].vertColor = Color::Green();
+
+		DrawMesh(m);
+
+	/*	
+
 
 		if (currentScene == 0)
 		{
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
 			DrawMesh(Pyramid);
 			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(-time) * Matrix::TranslationMatrix(0, 1, 0);
 
-			DrawMesh(Pyramid);
 
 			PixelShader = Pink;
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 class Vector2
 {
 public:
@@ -17,7 +18,7 @@ public:
 	Vector2 operator*(int const& _ref);
 	Vector2 operator/(float const& _ref);
 	Vector2 operator*(float const& _ref);
-
+	std::string ToString();
 	static Vector2 Zero();
 	static Vector2 One();
 	static Vector2 Left();

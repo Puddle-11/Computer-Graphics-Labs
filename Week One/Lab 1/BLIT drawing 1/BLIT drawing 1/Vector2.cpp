@@ -80,6 +80,10 @@ Vector2 Vector2::operator*(float const& _ref)
 	res.y = this->y * _ref;
 	return res;
 }
+std::string Vector2::ToString()
+{
+	return std::to_string(x) + ", " + std::to_string(y);
+}
 
  Vector2 Vector2::Zero() { return Vector2(0, 0); }
  Vector2 Vector2::One() { return Vector2(1, 1); }
