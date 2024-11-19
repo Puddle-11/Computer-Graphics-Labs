@@ -159,6 +159,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiles_12.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="treeolife.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector4.h" />

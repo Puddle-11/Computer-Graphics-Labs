@@ -10,6 +10,8 @@
 #include <cmath>
 #include "tiles_12.h"
 #include "fire_01.h"
+#include "treeolife.h"
+
 #include "XTime.h"
 #include "Rasterization.h"
 #include "Vector3.h"
@@ -110,26 +112,35 @@ int main()
 		SV_View = Matrix::Invert(CameraMatrix);
 
 
-		PixelShader = White;
+		PixelShader = nullptr;
 
 		ClearBuffer();
-
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
+		SV_WorldMatrix = Matrix::Identity();
+		DrawPlane(Vector2(1, 1), 9, Color::Orange());
+		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
 		
 
-		Mesh m = Mesh(Mesh::Cube());
+		Mesh m = Mesh(Mesh::UniqueCube());
 
-		m.verticies[0].vertColor = Color::Red();
-		m.verticies[1].vertColor = Color::Magenta();
-		m.verticies[2].vertColor = Color::White();
-		m.verticies[3].vertColor = Color::Yellow();
+	    DrawShaderTriangle(m.verticies[0], m.verticies[1], m.verticies[2]);
+		DrawShaderTriangle(m.verticies[3], m.verticies[2], m.verticies[0]);
 
-		m.verticies[4].vertColor = Color::Black();
-		m.verticies[5].vertColor = Color::Blue();
-		m.verticies[6].vertColor = Color::Cyan();
-		m.verticies[7].vertColor = Color::Green();
 
-		DrawMesh(m);
+		DrawShaderTriangle(m.verticies[4], m.verticies[5], m.verticies[6]);
+		DrawShaderTriangle(m.verticies[7], m.verticies[6], m.verticies[4]);
+
+		DrawShaderTriangle(m.verticies[8], m.verticies[9], m.verticies[10]);
+		DrawShaderTriangle(m.verticies[11], m.verticies[10], m.verticies[8]);
+
+		DrawShaderTriangle(m.verticies[12], m.verticies[13], m.verticies[14]);
+		DrawShaderTriangle(m.verticies[15], m.verticies[14], m.verticies[12]);
+
+		DrawShaderTriangle(m.verticies[16], m.verticies[17], m.verticies[18]);
+		DrawShaderTriangle(m.verticies[19], m.verticies[18], m.verticies[16]);
+
+		DrawShaderTriangle(m.verticies[20], m.verticies[21], m.verticies[22]);
+		DrawShaderTriangle(m.verticies[23], m.verticies[22], m.verticies[20]);
+
 
 	/*	
 
@@ -179,8 +190,7 @@ int main()
 			DrawMesh(Pyramid);
 			PixelShader = Teal;
 		}
-		SV_WorldMatrix = Matrix::Identity();
-		DrawPlane(Vector2(1, 1), 9, Color::Orange());*/
+	*/
 
 
 

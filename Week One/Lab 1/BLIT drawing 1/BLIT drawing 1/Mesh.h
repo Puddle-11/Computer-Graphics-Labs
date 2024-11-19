@@ -8,7 +8,10 @@ public:
 	Mesh(const Mesh& _ref);
 	int vertCount;
 	int triCount;
+	unsigned int* texture;
+
 	Vector4 center = Vector4::Zero();
+	void SetTexture(const unsigned int* _text, int _count);
 	void SetVerts(Vertex4D* points, int vertCount);
 	void SetTris(int* tris, int triCount);
 	void Rotate(Matrix rotationMatrix);
@@ -20,7 +23,7 @@ public:
 	static Mesh TrianglePyramid();
 	static Mesh SquarePyramid();
 	static Mesh Cube();
-
+	static Mesh UniqueCube();
 
 	Vertex4D* verticies;
 	Color objectColor;

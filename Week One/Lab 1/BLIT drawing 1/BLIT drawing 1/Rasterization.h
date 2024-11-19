@@ -4,17 +4,19 @@
 #include "Mesh.h"
 #include "Vector2.h"
 #include "Vector3.h"
+#include "ScreenBounds.h"
 #include <vector>
 void DrawShaderLine(Vertex4D& p1, Vertex4D& p2);
 void DrawMesh(Mesh& m);
-void WorldtoNDC();
+
 
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/);
+Vector2Int NDCtoScreen(Vector4 _NDCpos, ScreenBounds _bounds);
 void DrawPlane(Vector2 _size, int cells, Color c1);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4);
-void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c);
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor = false);
 
 
 
@@ -22,16 +24,20 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c);
 
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/)
 {
-
+	return NDCtoScreen(_NDCpos, ScreenBounds(ImageWidth, ImageHeight));
+}
+Vector2Int NDCtoScreen(Vector4 _NDCpos, ScreenBounds _bounds)
+{
 	//Filter x point to lie between -1, 1 to 0, 2
 	_NDCpos.x += 1;
 	_NDCpos.y += 1;
 
 
-	_NDCpos.x *= ImageWidth / 2;
-	_NDCpos.y = ImageHeight - _NDCpos.y * (ImageHeight / 2);
+	_NDCpos.x *= _bounds.Width / 2;
+	_NDCpos.y = _bounds.Height - _NDCpos.y * (_bounds.Height / 2);
 
 	return Vector2Int((int)_NDCpos.x, (int)_NDCpos.y);
+
 }
 void DrawPlane(Vector2 _size, int cells, Color c1)
 {
@@ -102,29 +108,18 @@ void DrawMesh(Mesh& m)
 		{
 			if (i % 3 == 0)
 			{
-				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], m.verticies[m.triangles[i]].vertColor);
+				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]]);
 			}
 
-			/*if ((i) % 3 == 0)
-			{
-				if ((i + 1) % 3 == 0)
-				{
-					DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i - 2]]);
-				}
-				else
-				{
-					if (!(m.triangles[i - 2] >= 0 || m.triangles[i - 2] < m.vertCount)) continue;
-
-					DrawShaderLine(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]]);
-				}
-			}
-			*/
 		}
 	}
 }
-void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c)
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 {
 
+
+	if (p1.point.w < NearPlane || p2.point.w < NearPlane || p3.point.w < NearPlane) return;
+	Color c;
 	Vertex4D cpy1 = p1;
 	Vertex4D cpy2 = p2;
 	Vertex4D cpy3 = p3;
@@ -146,7 +141,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c)
 	sp1.point = NDCtoScreen(cpy1.point);
 	sp2.point = NDCtoScreen(cpy2.point);
 	sp3.point = NDCtoScreen(cpy3.point);
-
+	if (!InScreenBounds(sp1.point) || !InScreenBounds(sp2.point) || !InScreenBounds(sp3.point)) return;
 	min.x = std::min(sp1.point.x, sp2.point.x);
 	min.y = std::min(sp1.point.y, sp2.point.y);
 						 					 
@@ -176,32 +171,51 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, Color c)
 			p.y = (sp3.point.y - sp1.point.y) * (tp.x - sp3.point.x) + (sp1.point.x - sp3.point.x) * (tp.y - sp3.point.y);
 			p.y = p.y / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x-sp2.point.x)*(sp1.point.y-sp3.point.y));
 			p.z = 1 - p.x - p.y;
-			Color p1c = p1.vertColor;
-			Color p2c = p2.vertColor;
-			Color p3c = p3.vertColor;
 
 			alpha = (cpy1.point.w * p.x + cpy2.point.w * p.y + cpy3.point.w * p.z);
-
-			unsigned int wRed = (p1c.GetRed() * p.x + p2c.GetRed() * p.y + p3c.GetRed() * p.z);
-			unsigned int wGreen = (p1c.GetGreen() * p.x + p2c.GetGreen() * p.y + p3c.GetGreen() * p.z);
-			unsigned int wBlue = (p1c.GetBlue() * p.x + p2c.GetBlue() * p.y + p3c.GetBlue() * p.z);
-
-			c.SetGreen(wGreen);
-			c.SetRed(wRed);
-			c.SetBlue(wBlue);
+	
 
 
 
-			/*float z = ((alpha) / 5);
+		/*	float z = ((alpha) / 5);
 			if (z > 1) z = 1;
 			if (z < 0) z = 0;
 			c = Color::CLerp(Color::Black(), Color::White(), z * 255);*/
 
 			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
 			{
+
 				if (alpha < AccessPixelDepth(x, y, mainBounds, depth_pixels))
 				{
 
+					if (useColor)
+					{
+						Color p1c = p1.vertColor;
+						Color p2c = p2.vertColor;
+						Color p3c = p3.vertColor;
+						unsigned int wRed = (p1c.GetRed() * p.x + p2c.GetRed() * p.y + p3c.GetRed() * p.z);
+						unsigned int wGreen = (p1c.GetGreen() * p.x + p2c.GetGreen() * p.y + p3c.GetGreen() * p.z);
+						unsigned int wBlue = (p1c.GetBlue() * p.x + p2c.GetBlue() * p.y + p3c.GetBlue() * p.z);
+
+						c.SetGreen(wGreen);
+						c.SetRed(wRed);
+						c.SetBlue(wBlue);
+					}
+					else
+					{
+
+					
+
+
+
+						float yr = (cpy1.uv.y  * p.x + cpy2.uv.y * p.y + cpy3.uv.y * p.z);
+						float xr = (cpy1.uv.x * p.x + cpy2.uv.x * p.y + cpy3.uv.x * p.z);
+						
+
+						Vector2Int pos = Vector2Int((int)(yr * treeolife_width), (int)(xr * treeolife_height));
+						c.SetARGB(Access(pos, ScreenBounds(treeolife_width, treeolife_height), treeolife_pixels).GetARGB());
+
+					}
 					Plot(tp, c, 0);
 					PlotDepth(tp, alpha);
 				}
