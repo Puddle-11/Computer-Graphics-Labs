@@ -7,7 +7,7 @@
 #include "ScreenBounds.h"
 #include <vector>
 void DrawShaderLine(Vertex4D& p1, Vertex4D& p2);
-void DrawMesh(Mesh& m);
+void DrawMesh(Mesh& m, bool useColor = false);
 
 
 Vector2Int NDCtoScreen(Vector4 _NDCpos /*Between (-1,-1,-1), (1,1,1)*/);
@@ -99,7 +99,7 @@ void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4)
 	}
 }
 
-void DrawMesh(Mesh& m)
+void DrawMesh(Mesh& m, bool useColor)
 {
 
 	for (int i = 0; i < m.triCount; i++)
@@ -108,7 +108,7 @@ void DrawMesh(Mesh& m)
 		{
 			if (i % 3 == 0)
 			{
-				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]]);
+				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], useColor);
 			}
 
 		}
@@ -118,7 +118,6 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 {
 
 
-	if (p1.point.w < NearPlane || p2.point.w < NearPlane || p3.point.w < NearPlane) return;
 	Color c;
 	Vertex4D cpy1 = p1;
 	Vertex4D cpy2 = p2;
@@ -131,6 +130,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 		VertexShader(cpy3);
 
 	}
+	if (cpy1.point.w < NearPlane || cpy2.point.w < NearPlane || cpy3.point.w < NearPlane) return;
 	//coordinates are relative using p1 as origin, p1->p2 as beta and p1->p3 as delta
 	VertexScreen sp1;
 	VertexScreen sp2;
@@ -141,7 +141,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 	sp1.point = NDCtoScreen(cpy1.point);
 	sp2.point = NDCtoScreen(cpy2.point);
 	sp3.point = NDCtoScreen(cpy3.point);
-	if (!InScreenBounds(sp1.point) || !InScreenBounds(sp2.point) || !InScreenBounds(sp3.point)) return;
+	//if (!InScreenBounds(sp1.point) || !InScreenBounds(sp2.point) || !InScreenBounds(sp3.point)) return;
 	min.x = std::min(sp1.point.x, sp2.point.x);
 	min.y = std::min(sp1.point.y, sp2.point.y);
 						 					 
@@ -177,11 +177,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 
 
 
-		/*	float z = ((alpha) / 5);
-			if (z > 1) z = 1;
-			if (z < 0) z = 0;
-			c = Color::CLerp(Color::Black(), Color::White(), z * 255);*/
-
+			
 			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
 			{
 
@@ -216,6 +212,11 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 						c.SetARGB(Access(pos, ScreenBounds(treeolife_width, treeolife_height), treeolife_pixels).GetARGB());
 
 					}
+					float z = ((alpha) / FarPlane);
+					if (z > 1) z = 1;
+					if (z < 0) z = 0;
+					c = Color::CLerp(Color::Black(), Color::White(), z * 255);
+
 					Plot(tp, c, 0);
 					PlotDepth(tp, alpha);
 				}

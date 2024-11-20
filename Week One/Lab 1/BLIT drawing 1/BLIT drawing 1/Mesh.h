@@ -14,6 +14,7 @@ public:
 	void SetTexture(const unsigned int* _text, int _count);
 	void SetVerts(Vertex4D* points, int vertCount);
 	void SetTris(int* tris, int triCount);
+	void SetTris(const unsigned int* tris, int _triCount);
 	void Rotate(Matrix rotationMatrix);
 	void SetColor(Color objCol);
 	void Transform(Vector4 _offset);

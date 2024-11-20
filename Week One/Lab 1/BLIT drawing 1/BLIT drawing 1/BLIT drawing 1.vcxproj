@@ -157,6 +157,8 @@
     <ClInclude Include="RasterSurface.h" />
     <ClInclude Include="ScreenBounds.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="StoneHenge.h" />
+    <ClInclude Include="StoneHenge_Texture.h" />
     <ClInclude Include="tiles_12.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="treeolife.h" />

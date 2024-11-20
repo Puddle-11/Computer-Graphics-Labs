@@ -11,11 +11,12 @@
 #include "tiles_12.h"
 #include "fire_01.h"
 #include "treeolife.h"
-
+#include "StoneHenge.h"
 #include "XTime.h"
 #include "Rasterization.h"
 #include "Vector3.h"
 #include "RasterSurface.h"
+#include "StoneHenge_Texture.h"
 Vector2Int center;
 XTime timer;
 int main()
@@ -29,7 +30,7 @@ int main()
 	image_pixels = new unsigned int[imagePixelCount];
 	depth_pixels = new float[imagePixelCount];
 
-	float cameraSpeed = 2;
+	float cameraSpeed = 10;
 	int currentScene = 0;
 	mainBounds.Width = ImageWidth;
 	mainBounds.Height = ImageHeight;
@@ -57,10 +58,21 @@ int main()
 
 	float time = 0;
 
-	Vector3 cameraPos = Vector3(0, 5, -3);
+	Vector3 cameraPos = Vector3(0, 5, -15);
 		ClearBuffer();
+		Mesh m;
+		Vertex4D verts[vertCount];
 
-	RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
+		for (size_t i = 0; i < vertCount; i++)
+		{
+			verts[i] = Vertex4D(Vector4(StoneHenge_data[i].pos[0], StoneHenge_data[i].pos[1], StoneHenge_data[i].pos[2], 1), Color::White(), Vector2(StoneHenge_data[i].uvw[0], StoneHenge_data[i].uvw[1]));
+		}
+		m.SetVerts(verts, vertCount);
+
+		m.SetTris(StoneHenge_indicies, (int)triCount);
+		m.SetTexture(StoneHenge_pixels, StoneHenge_numpixels);
+		RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
+
 	do
 	{
 	   timer.Signal();
@@ -117,29 +129,11 @@ int main()
 		ClearBuffer();
 		SV_WorldMatrix = Matrix::Identity();
 		DrawPlane(Vector2(1, 1), 9, Color::Orange());
-		SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(-2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 5, 0);
+		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(0, 0, 0);
+		DrawMesh(m, true);
 		
 
-		Mesh m = Mesh(Mesh::UniqueCube());
-
-	    DrawShaderTriangle(m.verticies[0], m.verticies[1], m.verticies[2]);
-		DrawShaderTriangle(m.verticies[3], m.verticies[2], m.verticies[0]);
-
-
-		DrawShaderTriangle(m.verticies[4], m.verticies[5], m.verticies[6]);
-		DrawShaderTriangle(m.verticies[7], m.verticies[6], m.verticies[4]);
-
-		DrawShaderTriangle(m.verticies[8], m.verticies[9], m.verticies[10]);
-		DrawShaderTriangle(m.verticies[11], m.verticies[10], m.verticies[8]);
-
-		DrawShaderTriangle(m.verticies[12], m.verticies[13], m.verticies[14]);
-		DrawShaderTriangle(m.verticies[15], m.verticies[14], m.verticies[12]);
-
-		DrawShaderTriangle(m.verticies[16], m.verticies[17], m.verticies[18]);
-		DrawShaderTriangle(m.verticies[19], m.verticies[18], m.verticies[16]);
-
-		DrawShaderTriangle(m.verticies[20], m.verticies[21], m.verticies[22]);
-		DrawShaderTriangle(m.verticies[23], m.verticies[22], m.verticies[20]);
+		
 
 
 	/*	

@@ -234,7 +234,17 @@ void Mesh::SetTris(int* tris, int _triCount)
 		triangles[i] = tris[i];
 	}
 }
-
+void Mesh::SetTris(const unsigned int* tris, int _triCount)
+{
+	if (_triCount % 3 != 0) return;
+	triCount = _triCount;
+	delete[] triangles;
+	triangles = new int[triCount];
+	for (size_t i = 0; i < triCount; i++)
+	{
+		triangles[i] = tris[i];
+	}
+}
 void Mesh::Rotate(Matrix rotationMatrix)
 {
 
