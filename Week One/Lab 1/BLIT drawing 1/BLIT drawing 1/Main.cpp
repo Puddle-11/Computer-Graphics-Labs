@@ -29,8 +29,7 @@ int main()
 	srand((unsigned int)time(NULL));
 	image_pixels = new unsigned int[imagePixelCount];
 	depth_pixels = new float[imagePixelCount];
-
-	float cameraSpeed = 10;
+	float cameraSpeed = 2;
 	int currentScene = 0;
 	mainBounds.Width = ImageWidth;
 	mainBounds.Height = ImageHeight;
@@ -58,7 +57,8 @@ int main()
 
 	float time = 0;
 
-	Vector3 cameraPos = Vector3(0, 5, -15);
+	Vector3 cameraPos = Vector3(0, 10, -50);
+	Vector2 cameraRot = Vector2::Zero();
 		ClearBuffer();
 		Mesh m;
 		Vertex4D verts[vertCount];
@@ -67,10 +67,12 @@ int main()
 		{
 			verts[i] = Vertex4D(Vector4(StoneHenge_data[i].pos[0], StoneHenge_data[i].pos[1], StoneHenge_data[i].pos[2], 1), Color::White(), Vector2(StoneHenge_data[i].uvw[0], StoneHenge_data[i].uvw[1]));
 		}
+
 		m.SetVerts(verts, vertCount);
 
 		m.SetTris(StoneHenge_indicies, (int)triCount);
-		m.SetTexture(StoneHenge_pixels, StoneHenge_numpixels);
+		m.SetTexture(StoneHenge_pixels, StoneHenge_numpixels, ScreenBounds(StoneHenge_width, StoneHenge_height));
+
 		RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
 
 	do
@@ -81,28 +83,21 @@ int main()
 		time += timer.Delta();
 		if (GetAsyncKeyState(87))
 		{
-			cameraPos.z += timer.Delta() * cameraSpeed;
+			cameraRot.x += timer.Delta() * cameraSpeed;
 		}
 		if (GetAsyncKeyState(83))
 		{
-			cameraPos.z -= timer.Delta() * cameraSpeed;
+			cameraRot.x -= timer.Delta() * cameraSpeed;
 		}
 		if (GetAsyncKeyState(65))
 		{
-			cameraPos.x -= timer.Delta() * cameraSpeed;
+			cameraRot.y -= timer.Delta() * cameraSpeed;
 		}
 		if (GetAsyncKeyState(68))
 		{
-			cameraPos.x += timer.Delta() * cameraSpeed;
+			cameraRot.y += timer.Delta() * cameraSpeed;
 		}
-		if (GetAsyncKeyState(32))
-		{
-			cameraPos.y += timer.Delta() * cameraSpeed;
-		}
-		if (GetAsyncKeyState(90))
-		{
-			cameraPos.y -= timer.Delta() * cameraSpeed;
-		}
+
 		if (GetAsyncKeyState(71))
 		{
 			if (!gDown)
@@ -111,26 +106,24 @@ int main()
 				currentScene = (currentScene + 1) % 3;
 			}
 		}
+
 		else
 		{
 			gDown = false;
 
 		}
 
-
-		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(-(p.y - 500) / (float)400) * Matrix::YRotationMatrix(-(p.x - 1000) / (float)400);
-		CameraMatrix = Matrix::Identity() * CameraRotationMatrix * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z);
+		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(cameraRot.x) * Matrix::YRotationMatrix(cameraRot.y);
+		CameraMatrix = Matrix::Identity() * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z)* CameraRotationMatrix;
 
 		SV_View = Matrix::Invert(CameraMatrix);
 
-
-		PixelShader = nullptr;
+		worldLight.intensity = 0.5f;
+		PixelShader = Default;
 
 		ClearBuffer();
 		SV_WorldMatrix = Matrix::Identity();
-		DrawPlane(Vector2(1, 1), 9, Color::Orange());
-		SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(0, 0, 0);
-		DrawMesh(m, true);
+		DrawMesh(m, false);
 		
 
 		

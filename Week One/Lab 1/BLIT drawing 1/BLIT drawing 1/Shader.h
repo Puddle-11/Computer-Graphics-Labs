@@ -1,5 +1,6 @@
 #pragma once
 #include "GlobalDefines.h"
+#include "DirectionalLight.h"
 void (*VertexShader)(Vertex4D&) = 0;
 
 void (*PixelShader)(VertexScreen&) = 0;
@@ -7,6 +8,7 @@ void (*PixelShader)(VertexScreen&) = 0;
 Matrix SV_WorldMatrix;
 Matrix SV_View;
 Matrix SV_Proj;
+DirectionalLight worldLight;
 void ToWorld(Vertex4D&_vert)
 {
 
@@ -19,6 +21,10 @@ void ToWorld(Vertex4D&_vert)
 	_vert.point.x /= _vert.point.w;
     _vert.point.y /= _vert.point.w;
 	_vert.point.z /= _vert.point.w;
+}
+void Default(VertexScreen& _pixel)
+{
+	_pixel.vertColor = Color::CLerp(_pixel.vertColor, Color::Black(), worldLight.intensity * 255);
 }
 void White(VertexScreen& _pixel)
 {

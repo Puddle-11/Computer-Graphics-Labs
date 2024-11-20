@@ -21,8 +21,6 @@ Mesh Mesh::operator=(const Mesh& _ref)
 	return *this;
 }
 
-
-
 void Mesh::SetColor(Color objCol)
 {
 	objectColor = objCol;
@@ -211,8 +209,10 @@ void Mesh::SetVerts(Vertex4D* points, int _vertCount)
 		verticies[i] = points[i];
 	}
 }
-void Mesh::SetTexture(const unsigned int* _text, int _count)
+void Mesh::SetTexture(const unsigned int* _text, int _count, ScreenBounds _scrBounds)
 {
+	textureSize = _count;
+	scrBounds = _scrBounds;
 	if (texture != nullptr)
 	{
 		delete[] texture;

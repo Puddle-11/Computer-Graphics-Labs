@@ -1,12 +1,14 @@
 #pragma once
 #include "Vector2Int.h"
 #include "Color.h"
+#include "Vector3.h"
 class VertexScreen
 {
 public:
 	Vector2Int point;
 	Color vertColor;
 	float z;
+	Vector3 normal;
 	VertexScreen();
 	VertexScreen(Vector2Int _point, Color c);
 	VertexScreen(Vector2Int _point);

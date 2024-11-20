@@ -16,7 +16,7 @@ void DrawPlane(Vector2 _size, int cells, Color c1);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3);
 void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4);
-void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor = false);
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor = false, unsigned int* texture = nullptr, ScreenBounds scrbnds = ScreenBounds(0, 0), int textureSize = 0);
 
 
 
@@ -101,20 +101,19 @@ void DrawPlane(Vector2 _size, int cells, Color c1, Color c2, Color c3, Color c4)
 
 void DrawMesh(Mesh& m, bool useColor)
 {
-
 	for (int i = 0; i < m.triCount; i++)
 	{
 		if (m.triangles[i] >= 0 || m.triangles[i] < m.vertCount)
 		{
 			if (i % 3 == 0)
 			{
-				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], useColor);
+				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], useColor, m.texture, m.scrBounds, m.textureSize);
 			}
-
 		}
 	}
 }
-void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
+
+void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, unsigned int* texture, ScreenBounds scrbnds, int textureSize)
 {
 
 
@@ -144,7 +143,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 	//if (!InScreenBounds(sp1.point) || !InScreenBounds(sp2.point) || !InScreenBounds(sp3.point)) return;
 	min.x = std::min(sp1.point.x, sp2.point.x);
 	min.y = std::min(sp1.point.y, sp2.point.y);
-						 					 
+
 	max.x = std::max(sp1.point.x, sp2.point.x);
 	max.y = std::max(sp1.point.y, sp2.point.y);
 
@@ -169,15 +168,12 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 			p.x = p.x / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x - sp2.point.x) * (sp1.point.y - sp3.point.y));
 
 			p.y = (sp3.point.y - sp1.point.y) * (tp.x - sp3.point.x) + (sp1.point.x - sp3.point.x) * (tp.y - sp3.point.y);
-			p.y = p.y / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x-sp2.point.x)*(sp1.point.y-sp3.point.y));
+			p.y = p.y / ((sp2.point.y - sp3.point.y) * (sp1.point.x - sp3.point.x) + (sp3.point.x - sp2.point.x) * (sp1.point.y - sp3.point.y));
 			p.z = 1 - p.x - p.y;
 
 			alpha = (cpy1.point.w * p.x + cpy2.point.w * p.y + cpy3.point.w * p.z);
-	
 
-
-
-			
+			VertexScreen currVert;
 			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
 			{
 
@@ -200,27 +196,26 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor)
 					else
 					{
 
-					
 
-
-
-						float yr = (cpy1.uv.y  * p.x + cpy2.uv.y * p.y + cpy3.uv.y * p.z);
+						float yr = (cpy1.uv.y * p.x + cpy2.uv.y * p.y + cpy3.uv.y * p.z);
 						float xr = (cpy1.uv.x * p.x + cpy2.uv.x * p.y + cpy3.uv.x * p.z);
-						
 
-						Vector2Int pos = Vector2Int((int)(yr * treeolife_width), (int)(xr * treeolife_height));
-						c.SetARGB(Access(pos, ScreenBounds(treeolife_width, treeolife_height), treeolife_pixels).GetARGB());
+
+						Vector2Int pos = Vector2Int((int)(xr * scrbnds.Width), (int)(yr * scrbnds.Height));
+						c.SetARGB(Access(pos, scrbnds, texture).GetARGB());
 
 					}
-					float z = ((alpha) / FarPlane);
-					if (z > 1) z = 1;
-					if (z < 0) z = 0;
-					c = Color::CLerp(Color::Black(), Color::White(), z * 255);
+					currVert.point = tp;
 
-					Plot(tp, c, 0);
+					currVert.vertColor = c;
+					if (PixelShader)
+					{
+						PixelShader(currVert);
+					}
+					Plot(currVert.point, currVert.vertColor, 0);
 					PlotDepth(tp, alpha);
 				}
-				
+
 			}
 		}
 	}

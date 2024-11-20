@@ -18,5 +18,5 @@
 #define imagePixelCount ImageHeight * ImageWidth
 #define FOV 90
 #define NearPlane 0.5
-#define FarPlane 50
+#define FarPlane 100
 #define AspectRatio ImageHeight / (float)ImageWidth
