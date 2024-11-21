@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector2Int.h"
+#include "Vector3.h"
 #include <cmath>
 float ILE(Vector2Int l1, Vector2Int l2, Vector2Int p1)
 {
@@ -15,5 +16,32 @@ float ILE(Vector2Int l1, Vector2Int l2, Vector2Int p1)
 	result /= mag;
 
 	return  result;
+
+}
+
+float Clamp(float min, float max, float _val)
+{
+	if (_val > max) _val = max;
+	else if (_val < min) _val = min;
+	return _val;
+}
+Vector3 Cross(Vector3 v1, Vector3 v2)
+{
+	Vector3 res;
+	res.x = v1.y * v2.z - v1.z * v2.y;
+	res.y = v1.z * v2.x - v1.x * v2.z;
+	res.z = v1.x * v2.y - v1.y * v2.x;
+	return res;
+
+
+}
+Vector3 Cross(Vector4 v1, Vector4 v2)
+{
+	Vector3 res;
+	res.x = v1.y * v2.z - v1.z * v2.y;
+	res.y = v1.z * v2.x - v1.x * v2.z;
+	res.z = v1.x * v2.y - v1.y * v2.x;
+	return res;
+
 
 }

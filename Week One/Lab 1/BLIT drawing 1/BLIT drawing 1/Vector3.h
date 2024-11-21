@@ -20,6 +20,7 @@ public:
 	Vector3 operator/(float const& _ref);
 	Vector3 operator*(float const& _ref);
 	Vector3 operator*(Matrix const& _ref);
+	Vector3 Normalize();
 	std::string ToString();
 	static Vector3 Zero();
 	static Vector3 One();

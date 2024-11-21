@@ -121,7 +121,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 	Vertex4D cpy1 = p1;
 	Vertex4D cpy2 = p2;
 	Vertex4D cpy3 = p3;
-
+	Vector3 planeNormal = Cross(p1.point-p2.point, p1.point -p3.point).Normalize();
 	if (VertexShader)
 	{
 		VertexShader(cpy1);
@@ -140,6 +140,11 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 	sp1.point = NDCtoScreen(cpy1.point);
 	sp2.point = NDCtoScreen(cpy2.point);
 	sp3.point = NDCtoScreen(cpy3.point);
+
+	sp1.normal = p1.normal;
+	sp2.normal = p2.normal;
+	sp3.normal = p3.normal;
+
 	//if (!InScreenBounds(sp1.point) || !InScreenBounds(sp2.point) || !InScreenBounds(sp3.point)) return;
 	min.x = std::min(sp1.point.x, sp2.point.x);
 	min.y = std::min(sp1.point.y, sp2.point.y);
@@ -174,6 +179,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 			alpha = (cpy1.point.w * p.x + cpy2.point.w * p.y + cpy3.point.w * p.z);
 
 			VertexScreen currVert;
+			currVert.normal = planeNormal;
 			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
 			{
 
@@ -215,7 +221,6 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 					Plot(currVert.point, currVert.vertColor, 0);
 					PlotDepth(tp, alpha);
 				}
-
 			}
 		}
 	}

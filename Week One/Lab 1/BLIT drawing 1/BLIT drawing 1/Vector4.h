@@ -24,6 +24,7 @@ public:
 	float Total();
 	std::string ToString();
 	static float DotProduct(Vector4 v1, Vector4 v2);
+	Vector4 Normalize();
 
 	static Vector4 Zero();
 	static Vector4 One();

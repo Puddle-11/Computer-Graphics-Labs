@@ -57,29 +57,25 @@ public:
 	static Color CLerp(Color C1, Color C2, int _step);
 
 	//Static colors
-	static unsigned int GetAlphaARGB(unsigned int _col) { return (_col & 0xFF000000) >> 16; }
+	static unsigned int GetAlphaARGB(unsigned int _col);
 
-	static Color Red() { return Color(0xFFFF0000); }
-	static Color Blue() { return Color(0xFF0000FF); }
-	static Color Green() { return Color(0xFF00FF00); }
-	static Color Magenta() { return Color(0xFFFF00FF); }
-	static Color Yellow() { return Color(0xFFFFFF00); }
-	static Color Cyan() { return Color(0xFF00FFFF); }
+	static Color Red();
+	static Color Blue();
+	static Color Green();
+	static Color Magenta();
+	static Color Yellow();
+	static Color Cyan();
 
+	static Color Orange();
+	static Color Lime();
+	static Color Violet();
+	static Color Pink();
+	static Color Teal();
+	static Color Azure();
 
-
-	static Color Orange() { return Color(0xFFFF7f00); }
-	static Color Lime() { return Color(0xFF7fFF00); }
-	static Color Violet() { return Color(0xFF7f00FF); }
-	static Color Pink() { return Color(0xFFFF007F); }
-	static Color Teal() { return Color(0xFF00FF7F); }
-	static Color Azure() { return Color(0xFF007FFF); }
-
-
-
-	static Color Black() { return Color(0xFF000000); }
-	static Color Grey() { return Color(0x77777777); }
-	static Color White() { return Color(0xFFFFFFFF); }
-	static Color Transparent() { return Color(0x00000000); }
-	static Color Zero() { return Color(0x00000000); }
+	static Color Black();
+	static Color Grey();
+	static Color White();
+	static Color Transparent();
+	static Color Zero();
 };

@@ -1,6 +1,6 @@
 #include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(Vector3 _angle, float _intensity, Color _c)
+DirectionalLight::DirectionalLight(Vector4 _angle, float _intensity, Color _c)
 {
 	angle = _angle;
 	intensity = _intensity;
@@ -9,7 +9,7 @@ DirectionalLight::DirectionalLight(Vector3 _angle, float _intensity, Color _c)
 
 DirectionalLight::DirectionalLight()
 {
-	angle = Vector3::Zero();
+	angle = Vector4::Zero();
 	intensity = 1;
 	tint = Color::White();
 }

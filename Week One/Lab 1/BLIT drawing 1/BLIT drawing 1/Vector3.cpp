@@ -29,6 +29,15 @@ Vector3 Vector3::operator-(Vector3 const& _ref)
 
 	return res;
 }
+Vector3 Vector3::Normalize()
+{
+	float xPow = x * x;
+	float yPow = y * y;
+	float zPow = z * z;
+	float length = sqrt(xPow + yPow + zPow);
+
+	return Vector3(x / length, y / length, z / length);
+}
 Vector3 Vector3::operator=(Vector3 const& _ref)
 {
 	this->x = _ref.x;
@@ -113,11 +122,11 @@ Vector3 Vector3::operator*(Matrix const& _ref)
 
 }
 
- Vector3 Vector3::Zero() { return Vector3(0, 0, 0); }
- Vector3 Vector3::One() { return Vector3(1, 1, 1); }
- Vector3 Vector3::Left() { return Vector3(-1, 0, 0); }
- Vector3 Vector3::Right() { return Vector3(1, 0, 0); }
- Vector3 Vector3::Up() { return Vector3(0, 1, 0); }
- Vector3 Vector3::Down() { return Vector3(0, -1, 0); }
- Vector3 Vector3::Forward() { return Vector3(0, 0, 1); }
- Vector3 Vector3::Backward() { return Vector3(0, 0, -1); }
+Vector3 Vector3::Zero() { return Vector3(0, 0, 0); }
+Vector3 Vector3::One() { return Vector3(1, 1, 1); }
+Vector3 Vector3::Left() { return Vector3(-1, 0, 0); }
+Vector3 Vector3::Right() { return Vector3(1, 0, 0); }
+Vector3 Vector3::Up() { return Vector3(0, 1, 0); }
+Vector3 Vector3::Down() { return Vector3(0, -1, 0); }
+Vector3 Vector3::Forward() { return Vector3(0, 0, 1); }
+Vector3 Vector3::Backward() { return Vector3(0, 0, -1); }

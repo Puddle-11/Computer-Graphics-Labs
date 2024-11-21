@@ -13,6 +13,15 @@ Vector4::Vector4(float _x, float _y, float _z, float _w)
 	z = _z;
 	w = _w;
 }
+Vector4 Vector4::Normalize()
+{
+	float xPow = x * x;
+	float yPow = y * y;
+	float zPow = z * z;
+	float length = sqrt(xPow + yPow + zPow);
+
+	return Vector4(x / length, y / length, z / length, w);
+}
 Vector4 Vector4::operator+(Vector4 const& _ref)
 {
 

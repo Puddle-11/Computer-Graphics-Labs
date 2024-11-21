@@ -41,7 +41,6 @@ int main()
 	VertexShader = ToWorld;
 	PixelShader = nullptr;
 
-
 	Matrix CameraMatrix;
 	Matrix CameraRotationMatrix;
 	CameraMatrix = Matrix::Identity();
@@ -59,28 +58,102 @@ int main()
 
 	Vector3 cameraPos = Vector3(0, 10, -50);
 	Vector2 cameraRot = Vector2::Zero();
-		ClearBuffer();
-		Mesh m;
-		Vertex4D verts[vertCount];
+	ClearBuffer();
+	Mesh m;
+	Mesh cube(Mesh::Cube());
+	Vertex4D verts[vertCount];
 
-		for (size_t i = 0; i < vertCount; i++)
-		{
-			verts[i] = Vertex4D(Vector4(StoneHenge_data[i].pos[0], StoneHenge_data[i].pos[1], StoneHenge_data[i].pos[2], 1), Color::White(), Vector2(StoneHenge_data[i].uvw[0], StoneHenge_data[i].uvw[1]));
-		}
+	for (size_t i = 0; i < vertCount; i++)
+	{
+		verts[i] = Vertex4D(Vector4(StoneHenge_data[i].pos[0], StoneHenge_data[i].pos[1], StoneHenge_data[i].pos[2], 1), Color::White(), Vector2(StoneHenge_data[i].uvw[0], StoneHenge_data[i].uvw[1]), Vector3(StoneHenge_data[i].nrm[0], StoneHenge_data[i].nrm[1], StoneHenge_data[i].nrm[2]));
+	}
 
-		m.SetVerts(verts, vertCount);
+	m.SetVerts(verts, vertCount);
 
-		m.SetTris(StoneHenge_indicies, (int)triCount);
-		m.SetTexture(StoneHenge_pixels, StoneHenge_numpixels, ScreenBounds(StoneHenge_width, StoneHenge_height));
+	m.SetTris(StoneHenge_indicies, (int)triCount);
+	m.SetTexture(StoneHenge_pixels, StoneHenge_numpixels, ScreenBounds(StoneHenge_width, StoneHenge_height));
 
-		RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
+	RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
+	Particle particles[50]{
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	};
+	for (int i = 0; i < 50; i++)
+	{
+		particles[i].timeStep = rand() % 500 / 100;
+		particles[i].pos = Vector3((rand() % 300) / 100, 2 + (rand() % 300) / 100, (rand() % 300) / 100);
+		particles[i].lifetime = rand() % 2 + 5;
+	}
 
 	do
 	{
-	   timer.Signal();
+
+		timer.Signal();
 		POINT p;
 		GetCursorPos(&p);
 		time += timer.Delta();
+		worldLight.angle = Vector4(1, 0.3, 0, 1);
+		worldLight.shadowIntensity = 0.85;
+		worldLight.intensity = 0.5;
+		ShadowColor = Color::Azure();
+		worldLight.tint = Color::Blue();
+		worldLight.tintWeight = 0.5;
+
+
+		worldLight2.angle = Vector4(-1, 0.3, 0, 1);
+		worldLight2.shadowIntensity = 0.85;
+		worldLight2.intensity = 0.5;
+		ShadowColor = Color::Black();
+		worldLight2.tint = Color::White();
+		worldLight2.tintWeight = 0.5;
 		if (GetAsyncKeyState(87))
 		{
 			cameraRot.x += timer.Delta() * cameraSpeed;
@@ -114,70 +187,42 @@ int main()
 		}
 
 		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(cameraRot.x) * Matrix::YRotationMatrix(cameraRot.y);
-		CameraMatrix = Matrix::Identity() * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z)* CameraRotationMatrix;
+		CameraMatrix = Matrix::Identity() * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z) * CameraRotationMatrix;
 
 		SV_View = Matrix::Invert(CameraMatrix);
 
-		worldLight.intensity = 0.5f;
 		PixelShader = Default;
 
 		ClearBuffer();
 		SV_WorldMatrix = Matrix::Identity();
 		DrawMesh(m, false);
-		
-
-		
+		PixelShader = nullptr;
 
 
-	/*	
-
-
-		if (currentScene == 0)
+		for (int i = 0; i < 50; i++)
 		{
-			DrawMesh(Pyramid);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(-time) * Matrix::TranslationMatrix(0, 1, 0);
+
+			particles[i].timeStep += timer.Delta();
+
+			for (int j = 0; j < cube.vertCount; j++)
+			{
+				cube.verticies[j].vertColor = Color::CLerp(particles[i].c1, particles[i].c2, (particles[i].timeStep / particles[i].lifetime) * 255);
+			}
+			SV_WorldMatrix = Matrix::ScaleMatrix(Clamp(0, 5, lerp(particles[i].Scale, 0, particles[i].timeStep / particles[i].lifetime)) * particles[i].Scale) * Matrix::TranslationMatrix(particles[i].pos.x, particles[i].pos.y + particles[i].timeStep * particles[i].speed, particles[i].pos.z);
+
+			if (particles[i].timeStep >= particles[i].lifetime)
+			{
+				particles[i].timeStep = 0;
+				particles[i].pos = Vector3(rand() % 300 / 100, 2+ rand() % 300 / 100, rand() % 300 / 100);
+				particles[i].lifetime = rand() % 2 + 5;
+
+			}
 
 
-			PixelShader = Pink;
-
-			SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(2.5, 0.5, -2.5);
-			DrawMesh(Cube);
-
-			SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(2.5, 0.5, 2.5);
-			DrawMesh(Cube);
-
-			SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(-2.5, 0.5, -2.5);
-			DrawMesh(Cube);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::TranslationMatrix(-2.5, 0.5, 2.5);
-			DrawMesh(Cube);
-			PixelShader = White;
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(2, 5, 0) * Matrix::YRotationMatrix(time);
-			DrawMesh(Cube);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(-2, 5, 0) * Matrix::YRotationMatrix(time);
-			DrawMesh(Cube);
-
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, 2) * Matrix::YRotationMatrix(time);
-			DrawMesh(Cube);
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(0.25) * Matrix::TranslationMatrix(0, 5, -2) * Matrix::YRotationMatrix(time);
-			DrawMesh(Cube);
-			PixelShader = Orange;
+			DrawMesh(cube, true);
 
 		}
-		else if (currentScene == 1)
-		{
-			PixelShader = Teal;
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 3, 0);
-			DrawMesh(Cube);
-			PixelShader = White;
 
-		}
-		else if (currentScene == 2)
-		{
-			SV_WorldMatrix = Matrix::Identity() * Matrix::ScaleMatrix(2) * Matrix::YRotationMatrix(time) * Matrix::TranslationMatrix(0, 3, 0);
-			DrawMesh(Pyramid);
-			PixelShader = Teal;
-		}
-	*/
 
 
 

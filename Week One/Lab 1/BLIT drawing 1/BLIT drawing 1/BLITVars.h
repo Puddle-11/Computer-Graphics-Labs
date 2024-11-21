@@ -8,12 +8,14 @@ static Vector2Int IndexToPos(int _index);
 static bool InScreenBounds(Vector2Int _pos);
 int ToIndex(Vector2Int _pos);
 int ToIndex(Vector2Int _pos, int _width);
+static float lerp(float p1, float p2, float ratio);
 
 int ToIndex(Vector2Int _pos, int _width)
 {
 	return _pos.x + (_pos.y * _width);
 }
-int ToIndex(Vector2Int _pos) {
+int ToIndex(Vector2Int _pos)
+{
 	return ToIndex(_pos, ImageWidth);
 }
 static bool InScreenBounds(Vector2Int _pos)
