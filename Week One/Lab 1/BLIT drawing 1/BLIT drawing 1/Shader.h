@@ -36,13 +36,15 @@ void Default(VertexScreen& _pixel)
 
 	VertexScreen t1 = _pixel;
 	VertexScreen t2 = _pixel;
+	VertexScreen t3 = _pixel;
 
 
 
 	ApplyLighting(t2, Vector3(worldLight2.angle.x, worldLight2.angle.y, worldLight2.angle.z), worldLight2.tint, worldLight2.tintWeight, worldLight2.intensity, worldLight2.shadowIntensity);
 	ApplyLighting(t1, Vector3(worldLight.angle.x, worldLight.angle.y, worldLight.angle.z), worldLight.tint, worldLight.tintWeight, worldLight.intensity, worldLight.shadowIntensity);
+	ApplyLighting(t3,  (pl.position-_pixel.worldPos).Normalize(), pl.tint, pl.tintWeight, pl.intensity, pl.shadowIntensity);
 
-	_pixel.vertColor = t2.vertColor + t1.vertColor;
+	_pixel.vertColor = t2.vertColor + t1.vertColor + t3.vertColor;
 }
 void ApplyLighting(VertexScreen& _pixel, Vector3 lightVec, Color _tint, float tintWeight, float intensity, float shadowIntensity)
 {

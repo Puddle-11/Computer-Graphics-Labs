@@ -9,7 +9,8 @@ public:
 	float range;
 	Color tint;
 	float tintWeight;
-	PointLight(Vector3 _pos, float _intensity, float _range, Color _tint, float _tintWeight);
+	float shadowIntensity;
+	PointLight(Vector3 _pos, float _intensity, float _range, Color _tint, float _tintWeight, float _si);
 	PointLight();
 
 private:
