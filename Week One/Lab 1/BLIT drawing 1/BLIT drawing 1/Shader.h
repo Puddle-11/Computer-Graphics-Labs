@@ -39,71 +39,26 @@ void Default(VertexScreen& _pixel)
 
 
 
-	ApplyLighting(t1, Vector3(worldLight.angle.x, worldLight.angle.y, worldLight.angle.z), worldLight.tint, worldLight.tintWeight, worldLight.intensity, worldLight.shadowIntensity);
 	ApplyLighting(t2, Vector3(worldLight2.angle.x, worldLight2.angle.y, worldLight2.angle.z), worldLight2.tint, worldLight2.tintWeight, worldLight2.intensity, worldLight2.shadowIntensity);
-	_pixel.vertColor = Color::CLerp(t1.vertColor, t2.vertColor, 0.5*255);
-		//_pixel.vertColor = t1.vertColor;
+	ApplyLighting(t1, Vector3(worldLight.angle.x, worldLight.angle.y, worldLight.angle.z), worldLight.tint, worldLight.tintWeight, worldLight.intensity, worldLight.shadowIntensity);
 
-	
-	//Vector4 worldLightNormal = worldLight.angle.Normalize();
-
-	//float dot = _pixel.normal.x * worldLightNormal.x + _pixel.normal.y * worldLightNormal.y + _pixel.normal.y * worldLightNormal.y;
-	//dot = Clamp(0, 1, dot);
-	//float shadowR = dot * worldLight.intensity; 
-	//shadowR += (worldLight.shadowIntensity - 1) * -1;
-	//shadowR *= 255;
-
-	//Color filterTint = Color::CLerp(worldLight.tint, Color::White(), worldLight.tintWeight * 255);
-
-	//float rR = (filterTint.GetRed() / (float)255);
-	//float gR = (filterTint.GetGreen() / (float)255);
-	//float bR = (filterTint.GetBlue() / (float)255);
-	//int red = _pixel.vertColor.GetRed();
-	//int green = _pixel.vertColor.GetGreen();
-	//int blue = _pixel.vertColor.GetBlue();
-
-	//red *= rR;
-	//green *= gR;
-	//blue *= bR;
-
-	//_pixel.vertColor.SetRed(red);
-	//_pixel.vertColor.SetGreen(green);
-	//_pixel.vertColor.SetBlue(blue);
-
-	//_pixel.vertColor = Color::CLerp(_pixel.vertColor, ShadowColor, shadowR);
+	_pixel.vertColor = t2.vertColor + t1.vertColor;
 }
 void ApplyLighting(VertexScreen& _pixel, Vector3 lightVec, Color _tint, float tintWeight, float intensity, float shadowIntensity)
 {
 	
 	Vector4 worldLightNormal = Vector4(lightVec.x, lightVec.y, lightVec.z, 1).Normalize();
 
-	float dot = _pixel.normal.x * worldLightNormal.x + _pixel.normal.y * worldLightNormal.y + _pixel.normal.y * worldLightNormal.y;
-	dot = Clamp(0, 1, dot);
-	float shadowR = dot * intensity;
-	shadowR += (shadowIntensity - 1) * -1;
-	shadowR *= 255;
+	float dot = Dot(lightVec, _pixel.normal);
 
+	dot = Clamp(0, 1, dot + 1/shadowIntensity);
 
-	
 	Color filterTint = Color::CLerp(_tint, Color::White(), tintWeight * 255);
+	filterTint = Color::CLerp(filterTint, Color::Black(), intensity * 255);
+	Color temp = _pixel.vertColor;
+	_pixel.vertColor = filterTint * dot;
+	_pixel.vertColor = temp * _pixel.vertColor;
 
-	float rR = (filterTint.GetRed() / (float)255);
-	float gR = (filterTint.GetGreen() / (float)255);
-	float bR = (filterTint.GetBlue() / (float)255);
-	int red = _pixel.vertColor.GetRed();
-	int green = _pixel.vertColor.GetGreen();
-	int blue = _pixel.vertColor.GetBlue();
-
-	red *= rR;
-	green *= gR;
-	blue *= bR;
-
-	Color temp;
-	temp.SetRed(red);
-	temp.SetGreen(green);
-	temp.SetBlue(blue);
-
-	_pixel.vertColor = Color::CLerp(temp, ShadowColor, shadowR);
 
 }
 void White(VertexScreen& _pixel)

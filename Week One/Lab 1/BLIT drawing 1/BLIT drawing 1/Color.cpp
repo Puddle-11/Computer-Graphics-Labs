@@ -20,7 +20,56 @@ Color::Color(unsigned int _R, unsigned int _G, unsigned  int _B, unsigned int _A
 
 
 
+Color Color::operator+(Color& _ref)
+{
+	Color res;
+	int red = this->GetRed() + _ref.GetRed();
+	int green = this->GetGreen() + _ref.GetGreen();
+	int blue = this->GetBlue() + _ref.GetBlue();
 
+
+	res.SetRed(red);
+	res.SetGreen(green);
+	res.SetBlue(blue);
+
+
+	return res;
+
+
+}
+Color Color::operator*(Color& _ref)
+{
+	Color res;
+	int red =   ((this->GetRed()   / (float)255) * (_ref.GetRed()   / (float)255)) * 255;
+	int green = ((this->GetGreen() / (float)255) * (_ref.GetGreen() / (float)255)) * 255;
+	int blue =  ((this->GetBlue()  / (float)255) * (_ref.GetBlue()  / (float)255)) * 255;
+
+	res.SetRed(red);
+	res.SetGreen(green);
+	res.SetBlue(blue);
+
+
+	return res;
+
+
+}
+Color Color::operator*(float _scale)
+{
+	Color res;
+	int red = (this->GetRed() * _scale);
+	int green = (this->GetGreen() * _scale);
+	int blue = (this->GetBlue() * _scale);
+
+
+	res.SetRed(red);
+	res.SetGreen(green);
+	res.SetBlue(blue);
+
+
+	return res;
+
+
+}
 unsigned int Color::ABGRtoARGB(unsigned int _original)
 {
 	unsigned int A = _original & 0xFF000000;
@@ -178,22 +227,22 @@ Color Color::CLerp(Color C1, Color C2, int _step)
 	Res.SetAlpha((int)(a * C1.GetAlpha() + (1 - a) * C2.GetAlpha()));
 	return Res;
 }
- unsigned int Color::GetAlphaARGB(unsigned int _col) { return (_col & 0xFF000000) >> 16; }
+unsigned int Color::GetAlphaARGB(unsigned int _col) { return (_col & 0xFF000000) >> 16; }
 
- Color Color::Red() { return Color(0xFFFF0000); }
- Color Color::Blue() { return Color(0xFF0000FF); }
- Color Color::Green() { return Color(0xFF00FF00); }
- Color Color::Magenta() { return Color(0xFFFF00FF); }
- Color Color::Yellow() { return Color(0xFFFFFF00); }
- Color Color::Cyan() { return Color(0xFF00FFFF); }
- Color Color::Orange() { return Color(0xFFFF7f00); }
- Color Color::Lime() { return Color(0xFF7fFF00); }
- Color Color::Violet() { return Color(0xFF7f00FF); }
- Color Color::Pink() { return Color(0xFFFF007F); }
- Color Color::Teal() { return Color(0xFF00FF7F); }
- Color Color::Azure() { return Color(0xFF007FFF); }
- Color Color::Black() { return Color(0xFF000000); }
- Color Color::Grey() { return Color(0x77777777); }
- Color Color::White() { return Color(0xFFFFFFFF); }
- Color Color::Transparent() { return Color(0x00000000); }
- Color Color::Zero() { return Color(0x00000000); }
+Color Color::Red() { return Color(0xFFFF0000); }
+Color Color::Blue() { return Color(0xFF0000FF); }
+Color Color::Green() { return Color(0xFF00FF00); }
+Color Color::Magenta() { return Color(0xFFFF00FF); }
+Color Color::Yellow() { return Color(0xFFFFFF00); }
+Color Color::Cyan() { return Color(0xFF00FFFF); }
+Color Color::Orange() { return Color(0xFFFF7f00); }
+Color Color::Lime() { return Color(0xFF7fFF00); }
+Color Color::Violet() { return Color(0xFF7f00FF); }
+Color Color::Pink() { return Color(0xFFFF007F); }
+Color Color::Teal() { return Color(0xFF00FF7F); }
+Color Color::Azure() { return Color(0xFF007FFF); }
+Color Color::Black() { return Color(0xFF000000); }
+Color Color::Grey() { return Color(0x77777777); }
+Color Color::White() { return Color(0xFFFFFFFF); }
+Color Color::Transparent() { return Color(0x00000000); }
+Color Color::Zero() { return Color(0x00000000); }

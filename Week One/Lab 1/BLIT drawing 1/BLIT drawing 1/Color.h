@@ -53,8 +53,10 @@ public:
 	void SetARGB(unsigned int _color);
 	void SetABGR(unsigned int _color);
 	void SetBGRA(unsigned int _color);
-
-	static Color CLerp(Color C1, Color C2, int _step);
+	Color operator+(Color& _ref);
+	Color operator*(Color& _ref);
+	Color operator*(float _scale);
+		static Color CLerp(Color C1, Color C2, int _step);
 
 	//Static colors
 	static unsigned int GetAlphaARGB(unsigned int _col);

@@ -9,6 +9,7 @@ public:
 	Color vertColor;
 	float z;
 	Vector3 normal;
+	Vector3 worldPos;
 	VertexScreen();
 	VertexScreen(Vector2Int _point, Color c);
 	VertexScreen(Vector2Int _point);
