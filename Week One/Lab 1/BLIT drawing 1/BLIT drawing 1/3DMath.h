@@ -16,9 +16,16 @@ float ILE(Vector2Int l1, Vector2Int l2, Vector2Int p1)
 	result /= mag;
 
 	return  result;
-
 }
+float Distance(Vector3 _p1, Vector3 _p2)
+{
+	float xPow = (_p2.x - _p1.x) * (_p2.x - _p1.x);
+	float yPow = (_p2.y - _p1.y) * (_p2.y - _p1.y);
+	float zPow = (_p2.z - _p1.z) * (_p2.z - _p1.z);
 
+	float mag = abs(sqrt(xPow + yPow + zPow));
+	return mag;
+}
 float Clamp(float min, float max, float _val)
 {
 	if (_val > max) _val = max;

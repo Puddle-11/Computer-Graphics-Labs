@@ -5,20 +5,21 @@
 class VertexScreen
 {
 public:
+
 	Vector2Int point;
 	Color vertColor;
 	float z;
 	Vector3 normal;
 	Vector3 worldPos;
+
 	VertexScreen();
 	VertexScreen(Vector2Int _point, Color c);
 	VertexScreen(Vector2Int _point);
 	VertexScreen(Color c);
 	void SetZ(float _val);
 	float GetZ();
-private:
-
 };
+
 void VertexScreen::SetZ(float _val)
 {
 	z = _val;

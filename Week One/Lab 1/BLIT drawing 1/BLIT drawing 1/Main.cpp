@@ -47,7 +47,6 @@ int main()
 	SV_View = Matrix::Identity();
 	SV_WorldMatrix = Matrix::Identity();
 	SV_Proj = Matrix::Identity();
-	bool gDown = false;
 
 
 	SV_Proj = Matrix::ProjectionMatrix(0.1, 10, 90, AspectRatio);
@@ -55,7 +54,10 @@ int main()
 
 
 	float time = 0;
-
+	bufferColorb.SetRed(10);
+	bufferColorb.SetGreen(18);
+	bufferColorb.SetBlue(41);
+	bufferColort = Color::Black();
 	Vector3 cameraPos = Vector3(0, 10, -50);
 	Vector2 cameraRot = Vector2::Zero();
 	ClearBuffer();
@@ -79,17 +81,127 @@ int main()
 	worldLight.tint = Color::Blue();
 	worldLight.tintWeight = 0.5;
 
-	worldLight2.angle = Vector4(1, 0.3, 0, 1);
+	worldLight2.angle = Vector4(1, 0.1, 0, 1);
 	worldLight2.shadowIntensity = 0.85;
-	worldLight2.intensity = 0.5;
+	worldLight2.intensity = 0.7;
 	ShadowColor = Color::Black();
 	worldLight2.tint = Color::Orange();
 	worldLight2.tintWeight = 0.7;
 
 	pl.intensity = 1;
-	pl.range = 5;
 	pl.tint = Color::Orange();
 	pl.tintWeight = 1;
+	pl.position = Vector3(0, 5, 0);
+	pl.shadowIntensity = 1;
+	float flickerTimer = 0;
+
+	Particle particles[50]{
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 1, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 2, 5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 3),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 5, 2),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 5, 4),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 1, Color::Red(), Color::Yellow(), 3, 3.5),
+	Particle(Vector3(0,0,0), Vector4(0,0,0,1), 2, Color::Red(), Color::Yellow(), 4, 5),
+	};
+
+
+	Vertex4D* stars = new Vertex4D[3000];
+
+	for (int i = 0; i < 3000; i++)
+	{
+		//stars[i].point = Vector4(rand()%100/(float)100, rand() % 100 / (float)100, rand() % 100 / (float)100, 1).Normalize();
+		stars[i].point = Vector4((rand() % 100 / (float)100) - 0.5, (rand() % 100 / (float)100) - 0.5, (rand() % 100 / (float)100) - 0.5, 1).Normalize();
+
+		switch (rand() % 3)
+		{
+		case 0:
+			stars[i].vertColor.SetRed(122);
+			stars[i].vertColor.SetGreen(181);
+			stars[i].vertColor.SetBlue(196);
+			break;
+		case 1:
+
+			stars[i].vertColor.SetRed(255);
+			stars[i].vertColor.SetGreen(212);
+			stars[i].vertColor.SetBlue(143);
+			break;
+		case 2:
+
+			stars[i].vertColor.SetRed(255);
+			stars[i].vertColor.SetGreen(222);
+			stars[i].vertColor.SetBlue(214);
+			break;
+		}
+		stars[i].point.x *= 500;
+		stars[i].point.y *= 500;
+		stars[i].point.z *= 500;
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+	for (int i = 0; i < 50; i++)
+	{
+		particles[i].timeStep = rand() % 500 / 100;
+		particles[i].pos = Vector3((rand() % 300) / 100, 2 + (rand() % 300) / 100, (rand() % 300) / 100);
+		particles[i].lifetime = rand() % 2 + 5;
+	}
+
+
+	int sceneNum = 0;
 	RS_Initialize("Rowan Byington Lab 3", mainBounds.Width, mainBounds.Height);
 	do
 	{
@@ -98,6 +210,17 @@ int main()
 		POINT p;
 		GetCursorPos(&p);
 		time += timer.Delta();
+		if (GetAsyncKeyState(0x0D) & 0x1)
+		{
+			sceneNum = (sceneNum + 1) % 2;
+		}
+
+
+		//pl.range = ((sin(time) + 1) / 2) * 50;
+
+
+
+
 
 		if (GetAsyncKeyState(87))
 		{
@@ -116,27 +239,66 @@ int main()
 			cameraRot.y += timer.Delta() * cameraSpeed;
 		}
 
+
+
 		CameraRotationMatrix = Matrix::Identity() * Matrix::XRotationMatrix(cameraRot.x) * Matrix::YRotationMatrix(cameraRot.y);
 		CameraMatrix = Matrix::Identity() * Matrix::TranslationMatrix(cameraPos.x, cameraPos.y, cameraPos.z) * CameraRotationMatrix;
-
-
-
-
 		SV_View = Matrix::Invert(CameraMatrix);
 
-		PixelShader = Default;
-		Color c;
-		Color b;
-		Color d = c + b;
 		ClearBuffer();
+		PixelShader = nullptr;
 		SV_WorldMatrix = Matrix::Identity();
+
+		for (int i = 0; i < 3000; i++)
+		{
+
+			PlotShadedPoint(stars[i]);
+		}
+		PixelShader = Default;
 		DrawMesh(m, false);
 
+		if (sceneNum == 1)
+		{
 
+			if (flickerTimer >= 0.12)
+			{
+				flickerTimer = 0;
+				pl.range = rand() % 10 + 30;
+				pl.intensity = rand() % 100 / 200 + 1;
+			}
+			else
+			{
+				flickerTimer += timer.Delta();
+			}
+			PixelShader = nullptr;
+			for (int i = 0; i < 50; i++)
+			{
+				particles[i].timeStep += timer.Delta();
+				for (int j = 0; j < cube.vertCount; j++)
+				{
+					cube.verticies[j].vertColor = Color::CLerp(particles[i].c1, particles[i].c2, (particles[i].timeStep / particles[i].lifetime) * 255);
+				}
+				SV_WorldMatrix = Matrix::ScaleMatrix(Clamp(0, 5, lerp(particles[i].Scale, 0, particles[i].timeStep / particles[i].lifetime)) * particles[i].Scale) * Matrix::TranslationMatrix(particles[i].pos.x, particles[i].pos.y + particles[i].timeStep * particles[i].speed, particles[i].pos.z);
+				if (particles[i].timeStep >= particles[i].lifetime)
+				{
+					particles[i].timeStep = 0;
+					particles[i].pos = Vector3(rand() % 300 / 100, 2 + rand() % 300 / 100, rand() % 300 / 100);
+					particles[i].lifetime = rand() % 2 + 5;
 
+				}
+				DrawMesh(cube, true);
 
+			}
 
+		}
+		else
+		{
 
+			pl.range = (sin(flickerTimer) + 1) / 2 * 30;
+			pl.intensity = 1;
+			flickerTimer += timer.Delta();
+
+		}
 
 	} while (RS_Update(image_pixels, imagePixelCount));
 	RS_Shutdown();

@@ -13,10 +13,9 @@ Matrix SV_View;
 Matrix SV_Proj;
 DirectionalLight worldLight;
 DirectionalLight worldLight2;
-
 PointLight pl;
 Color ShadowColor;
-
+float ambient = 0.1;
 void ApplyLighting(VertexScreen& _pixel, Vector3 lightVec, Color _tint, float tintWeight, float intensity, float shadowIntensity);
 void ToWorld(Vertex4D&_vert)
 {
@@ -26,10 +25,11 @@ void ToWorld(Vertex4D&_vert)
 	_vert.point = _vert.point * SV_View;
 
 	_vert.point = _vert.point * SV_Proj;
-
+	if (_vert.point.w <= NearPlane) return;
 	_vert.point.x /= _vert.point.w;
     _vert.point.y /= _vert.point.w;
 	_vert.point.z /= _vert.point.w;
+
 }
 void Default(VertexScreen& _pixel)
 {
@@ -42,19 +42,26 @@ void Default(VertexScreen& _pixel)
 
 	ApplyLighting(t2, Vector3(worldLight2.angle.x, worldLight2.angle.y, worldLight2.angle.z), worldLight2.tint, worldLight2.tintWeight, worldLight2.intensity, worldLight2.shadowIntensity);
 	ApplyLighting(t1, Vector3(worldLight.angle.x, worldLight.angle.y, worldLight.angle.z), worldLight.tint, worldLight.tintWeight, worldLight.intensity, worldLight.shadowIntensity);
-	ApplyLighting(t3,  (pl.position-_pixel.worldPos).Normalize(), pl.tint, pl.tintWeight, pl.intensity, pl.shadowIntensity);
+	
+	float pointVal = lerp(1, 0, Clamp(0, 1, Distance(_pixel.worldPos, pl.position) / pl.range));
+	ApplyLighting(t3,  (pl.position-_pixel.worldPos).Normalize(), pl.tint, 1, pl.intensity * (pointVal * pointVal), pl.shadowIntensity);
 
 	_pixel.vertColor = t2.vertColor + t1.vertColor + t3.vertColor;
 }
 void ApplyLighting(VertexScreen& _pixel, Vector3 lightVec, Color _tint, float tintWeight, float intensity, float shadowIntensity)
 {
-	
+
+	if (intensity <= 0.01)
+	{
+		_pixel.vertColor = Color::Black();
+		return;
+	}
 	Vector4 worldLightNormal = Vector4(lightVec.x, lightVec.y, lightVec.z, 1).Normalize();
 
 	float dot = Dot(lightVec, _pixel.normal);
 
-	dot = Clamp(0, 1, dot + 1/shadowIntensity);
-
+	dot = Clamp(0, 1, dot + ambient);
+	
 	Color filterTint = Color::CLerp(_tint, Color::White(), tintWeight * 255);
 	filterTint = Color::CLerp(filterTint, Color::Black(), intensity * 255);
 	Color temp = _pixel.vertColor;

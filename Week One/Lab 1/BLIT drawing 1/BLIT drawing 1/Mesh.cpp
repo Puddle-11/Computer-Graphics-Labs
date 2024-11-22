@@ -20,7 +20,6 @@ Mesh Mesh::operator=(const Mesh& _ref)
 	this->SetVerts(_ref.verticies, _ref.vertCount);
 	return *this;
 }
-
 void Mesh::SetColor(Color objCol)
 {
 	objectColor = objCol;

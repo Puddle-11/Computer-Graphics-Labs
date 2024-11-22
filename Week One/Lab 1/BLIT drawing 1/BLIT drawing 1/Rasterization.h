@@ -127,10 +127,13 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 		VertexShader(cpy1);
 		VertexShader(cpy2);
 		VertexShader(cpy3);
-
 	}
+
 	if (cpy1.point.w < NearPlane || cpy2.point.w < NearPlane || cpy3.point.w < NearPlane) return;
+
+
 	//coordinates are relative using p1 as origin, p1->p2 as beta and p1->p3 as delta
+
 	VertexScreen sp1;
 	VertexScreen sp2;
 	VertexScreen sp3;
@@ -180,12 +183,15 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 
 			VertexScreen currVert;
 			currVert.normal = planeNormal;
+			Vector4 worldPos;
+
 			if (p.x >= 0 && p.y >= 0 && p.z >= 0)
 			{
 
 				if (alpha < AccessPixelDepth(x, y, mainBounds, depth_pixels))
 				{
-
+					worldPos = (p1.point * p.x) + (p2.point * p.y) + (p3.point * p.z);
+					currVert.worldPos = Vector3(worldPos.x, worldPos.y, worldPos.z);
 					if (useColor)
 					{
 						Color p1c = p1.vertColor;
@@ -201,16 +207,12 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 					}
 					else
 					{
-
-
 						float yr = (cpy1.uv.y * p.x + cpy2.uv.y * p.y + cpy3.uv.y * p.z);
 						float xr = (cpy1.uv.x * p.x + cpy2.uv.x * p.y + cpy3.uv.x * p.z);
-
-
 						Vector2Int pos = Vector2Int((int)(xr * scrbnds.Width), (int)(yr * scrbnds.Height));
 						c.SetARGB(Access(pos, scrbnds, texture).GetARGB());
-
 					}
+
 					currVert.point = tp;
 
 					currVert.vertColor = c;
@@ -220,6 +222,8 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 					}
 					Plot(currVert.point, currVert.vertColor, 0);
 					PlotDepth(tp, alpha);
+
+
 				}
 			}
 		}
@@ -250,8 +254,6 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 	pixelPoint1.vertColor = p1.vertColor;
 	pixelPoint2.vertColor = p2.vertColor;
 
-	//Plot(pixelPoint1.point, cpy1.vertColor, 0);
-	//DrawLine(pixelPoint1, pixelPoint2);
 
 	float r = 0;
 	int yChange = abs(pixelPoint2.point.y - pixelPoint1.point.y);
@@ -259,7 +261,6 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 
 	int maxChange = xChange > yChange ? xChange : yChange;
 	VertexScreen currVert = VertexScreen(pixelPoint1.point, pixelPoint1.vertColor);
-
 	for (int i = 0; i <= maxChange; i++)
 	{
 		r = (float)i / (float)abs(maxChange);
@@ -278,3 +279,20 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 
 }
 
+void PlotShadedPoint(Vertex4D _p1)
+{
+	if (VertexShader)
+	{
+		VertexShader(_p1);
+	}
+	VertexScreen sp1;
+	sp1 = NDCtoScreen(_p1.point);
+	sp1.vertColor = _p1.vertColor;
+	if (_p1.point.w < NearPlane) return;
+
+	if (PixelShader)
+	{
+		PixelShader(sp1);
+	}
+	Plot(sp1.point, sp1.vertColor, 0);
+}

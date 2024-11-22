@@ -14,7 +14,7 @@
 #include "Mesh.h"
 #include "3DMath.h"
 #include "Particle.h"
-#define ImageWidth 800
+#define ImageWidth 900
 #define ImageHeight 500
 #define imagePixelCount ImageHeight * ImageWidth
 #define FOV 90

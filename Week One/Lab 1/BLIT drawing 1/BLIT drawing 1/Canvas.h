@@ -11,7 +11,8 @@ Vector2Int pixelPos;
 ScreenBounds mainBounds;
 ScreenBounds srcBounds;
 ScreenBounds fireAnimBounds;
-
+Color bufferColort;
+Color bufferColorb;
 
 
 //Decleration
@@ -291,7 +292,8 @@ void ClearLayers(int _index)
 {
 	if (_index == 0)
 	{
-		std::fill(image_pixels, image_pixels + imagePixelCount, Color::Black().GetARGB());
+
+		std::fill(image_pixels, image_pixels + imagePixelCount, bufferColort.GetARGB());
 		std::fill(depth_pixels, depth_pixels + imagePixelCount, FarPlane);
 
 	}
