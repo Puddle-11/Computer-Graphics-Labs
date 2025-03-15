@@ -17,6 +17,7 @@
 #include "Vector3.h"
 #include "RasterSurface.h"
 #include "StoneHenge_Texture.h"
+
 Vector2Int center;
 XTime timer;
 int main()
@@ -63,6 +64,7 @@ int main()
 	ClearBuffer();
 	Mesh m;
 	Mesh cube(Mesh::Cube());
+
 	Vertex4D verts[vertCount];
 
 	for (size_t i = 0; i < vertCount; i++)

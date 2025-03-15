@@ -107,6 +107,7 @@ void DrawMesh(Mesh& m, bool useColor)
 		{
 			if (i % 3 == 0)
 			{
+
 				DrawShaderTriangle(m.verticies[m.triangles[i]], m.verticies[m.triangles[i + 1]], m.verticies[m.triangles[i + 2]], useColor, m.texture, m.scrBounds, m.textureSize);
 			}
 		}
@@ -115,7 +116,6 @@ void DrawMesh(Mesh& m, bool useColor)
 
 void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, unsigned int* texture, ScreenBounds scrbnds, int textureSize)
 {
-
 
 	Color c;
 	Vertex4D cpy1 = p1;
@@ -164,6 +164,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 	sp2.vertColor = c;
 	sp3.vertColor = c;
 	float alpha;
+
 	for (int x = min.x; x < max.x; x++)
 	{
 		for (int y = min.y; y < max.y; y++)
@@ -212,9 +213,7 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 						Vector2Int pos = Vector2Int((int)(xr * scrbnds.Width), (int)(yr * scrbnds.Height));
 						c.SetARGB(Access(pos, scrbnds, texture).GetARGB());
 					}
-
 					currVert.point = tp;
-
 					currVert.vertColor = c;
 					if (PixelShader)
 					{
@@ -222,8 +221,6 @@ void DrawShaderTriangle(Vertex4D p1, Vertex4D p2, Vertex4D p3, bool useColor, un
 					}
 					Plot(currVert.point, currVert.vertColor, 0);
 					PlotDepth(tp, alpha);
-
-
 				}
 			}
 		}
@@ -265,6 +262,7 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 	{
 		r = (float)i / (float)abs(maxChange);
 		currVert.point = Vector2Int((int)floor(lerp((float)pixelPoint1.point.x, (float)pixelPoint2.point.x, r) + 0.5), (int)floor(lerp((float)pixelPoint1.point.y, (float)pixelPoint2.point.y, r) + 0.5));
+		
 		currVert.vertColor = Color::CLerp(pixelPoint2.vertColor, pixelPoint1.vertColor, (int)(r * 255));
 		currVert.SetZ(lerp(cpy1.point.w, cpy2.point.w, r));
 
@@ -275,7 +273,6 @@ void DrawShaderLine(Vertex4D& p1, Vertex4D& p2)
 
 		Plot(currVert.point, currVert.vertColor, 0);
 	}
-
 
 }
 
