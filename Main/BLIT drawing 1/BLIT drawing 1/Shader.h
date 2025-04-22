@@ -25,6 +25,7 @@ void ToWorld(Vertex4D&_vert)
 	_vert.point = _vert.point * SV_View;
 
 	_vert.point = _vert.point * SV_Proj;
+
 	if (_vert.point.w <= NearPlane) return;
 	_vert.point.x /= _vert.point.w;
     _vert.point.y /= _vert.point.w;

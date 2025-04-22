@@ -25,7 +25,15 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(-1); // set block of memory to find memory leak
 	_CrtDumpMemoryLeaks();
+	Vector4 vec;
+	vec.x = 0.5;
+	vec.y = 1;
+	vec.z = 2;
+	vec.w = 1;
 
+	Matrix ma = Matrix::ZRotationMatrix(0.785398);
+
+	vec = vec * ma;
 	timer = XTime();
 	srand((unsigned int)time(NULL));
 	image_pixels = new unsigned int[imagePixelCount];
@@ -184,8 +192,6 @@ int main()
 
 
 	}
-
-
 
 
 

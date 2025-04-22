@@ -1,31 +1,17 @@
-
-
 #include <iostream>
+#include "MyClass.h"
 #include <vector>
 #include <string>
-#include <iostream>
-#include <fstream>
 #include <map>
-#include <bitset>
-#include <thread>
-#include <chrono>
 
 
-int main()
+
+void main()
 {
+	int arr[5] = {1,2,3,4,5};
+	std::vector<int> vec = { 1,2,3,4,5 };
 
-	//part 1: decleration of itterator
-	// 
-	//part 2: conditional
-	//part 3: incrementer
-	int arr[] = {5,10,15,20,25};
+	std::cout << vec[6];
 
-	std::cout << arr[1];
 
 }
-
-
-
-
-
-
